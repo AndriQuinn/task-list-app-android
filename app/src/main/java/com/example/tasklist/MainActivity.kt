@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.tasklist.ui.theme.TaskListTheme
+import com.example.tasklist.ui.theme.screen.HomeScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,29 +20,24 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TaskListTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun TaskListApp(modifier: Modifier = Modifier) {
+    HomeScreen()
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "Task List HomeScreen")
 @Composable
 fun GreetingPreview() {
     TaskListTheme {
-        Greeting("Android")
+        TaskListApp()
     }
 }
