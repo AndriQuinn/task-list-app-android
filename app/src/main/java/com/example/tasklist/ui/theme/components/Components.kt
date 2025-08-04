@@ -127,9 +127,9 @@ fun StatusIndicator(
         Image(
             painter = painterResource(statusType.icon),
             contentDescription = "status icon",
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(16.dp)
         )
-        Spacer(Modifier.width(10.dp))
+        Spacer(Modifier.width(5.dp))
         Text(
             text = statusType.statusName,
             color = Color.White

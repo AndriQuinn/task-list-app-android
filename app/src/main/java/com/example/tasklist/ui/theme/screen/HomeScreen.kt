@@ -24,9 +24,17 @@ import com.example.tasklist.ui.theme.components.DateBanner
 import com.example.tasklist.ui.theme.components.StatusIndicatorBar
 import com.example.tasklist.ui.theme.TaskListTheme
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.tasklist.R
 import com.example.tasklist.ui.theme.components.StatusIndicator
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 
 
 @Composable
@@ -83,9 +91,40 @@ fun TopBanner(
 @Composable
 fun NavBar(modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier.fillMaxSize()
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier
+            .padding(horizontal = 30.dp)
+            .fillMaxSize()
     ) {
-
+        Row(
+            modifier = modifier.fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(R.drawable.logo_icon),
+                contentDescription = "logo image",
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(Modifier.width(5.dp))
+            Text (
+                text = "TaskList",
+                color = Color.White
+            )
+        }
+        Button(
+            onClick = {/**/},
+            colors = buttonColors(
+                contentColor = Color.Transparent,
+                containerColor = Color.Transparent
+            ),
+        ) {
+            Image(
+                painter = painterResource(R.drawable.add_icon),
+                contentDescription = "add icon",
+                modifier = Modifier.size(25.dp)
+            )
+        }
     }
 }
 
@@ -105,7 +144,7 @@ fun TaskLists(modifier: Modifier = Modifier) {
             Text(
                 text = "Tasks",
                 color = Color.White,
-                fontSize = 30.sp
+                fontSize = 20.sp
             )
             Text(
                 text = "Total",
@@ -124,6 +163,30 @@ fun TaskLists(modifier: Modifier = Modifier) {
                 deadline = "8/8/16",
                 status = StatusType.DONE
             )
+
+            TaskTab(
+                title = "Project TaskList",
+                deadline = "8/8/16",
+                status = StatusType.DONE
+            )
+
+            TaskTab(
+                title = "Project TaskList",
+                deadline = "8/8/16",
+                status = StatusType.DONE
+            )
+
+            TaskTab(
+                title = "Project TaskList",
+                deadline = "8/8/16",
+                status = StatusType.DONE
+            )
+
+            TaskTab(
+                title = "Project TaskList",
+                deadline = "8/8/16",
+                status = StatusType.DONE
+            )
         }
     }
 }
@@ -135,44 +198,53 @@ fun TaskTab(
     status: StatusType,
     modifier: Modifier = Modifier
 ) {
-    Row (
-        modifier = Modifier
-            .padding(vertical = 15.dp)
-            .fillMaxWidth()
+    Button (
+        onClick = {/**/},
+        colors = buttonColors(
+            containerColor = Color.Transparent,
+            contentColor = Color.Transparent
+        ),
+        modifier = modifier.fillMaxWidth()
     ) {
-
-        // Left Part
-        // title and deadline
-        Column(
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.Start,
-            modifier = modifier.weight(1f)
+        Row(
+            modifier = Modifier
+                .padding(vertical = 15.dp)
+                .fillMaxWidth()
         ) {
-            Text(
-                text = title,
-                color = Color.White
-            )
-            Text (
-                text = deadline,
-                color = Color.White
-            )
-        }
 
-        // Right Part
-        // Status
-        Column(
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.End,
-            modifier = modifier.weight(1f)
-        ) {
-            Text(
-                text = "Status:",
-                color = Color.White
-            )
+            // Left Part
+            // title and deadline
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.Start,
+                modifier = modifier.weight(1f)
+            ) {
+                Text(
+                    text = title,
+                    color = Color.White
+                )
+                Text(
+                    text = deadline,
+                    color = Color.White
+                )
+            }
 
-            StatusIndicator(
-                statusType = status
-            )
+            // Right Part
+            // Status
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.End,
+                modifier = modifier.weight(1f)
+            ) {
+                Text(
+                    text = "Status:",
+                    color = Color.White
+                )
+
+                StatusIndicator(
+                    statusType = status
+                )
+            }
         }
     }
     Spacer(Modifier.height(5.dp))
