@@ -35,6 +35,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 
 @Composable
@@ -94,7 +96,7 @@ fun NavBar(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
-            .padding(horizontal = 30.dp)
+            .padding(horizontal = 15.dp)
             .fillMaxSize()
     ) {
         Row(
@@ -104,7 +106,7 @@ fun NavBar(modifier: Modifier = Modifier) {
             Image(
                 painter = painterResource(R.drawable.logo_icon),
                 contentDescription = "logo image",
-                modifier = Modifier.size(25.dp)
+                modifier = Modifier.size(30.dp)
             )
             Spacer(Modifier.width(5.dp))
             Text (
@@ -118,11 +120,14 @@ fun NavBar(modifier: Modifier = Modifier) {
                 contentColor = Color.Transparent,
                 containerColor = Color.Transparent
             ),
+            contentPadding = PaddingValues(5.dp),
+            shape = RoundedCornerShape(0.dp),
+            modifier = Modifier.size(30.dp)
         ) {
             Image(
                 painter = painterResource(R.drawable.add_icon),
                 contentDescription = "add icon",
-                modifier = Modifier.size(25.dp)
+                modifier = Modifier.size(30.dp)
             )
         }
     }

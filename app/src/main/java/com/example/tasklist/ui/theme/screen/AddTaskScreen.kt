@@ -24,6 +24,7 @@ import com.example.tasklist.ui.theme.components.DateBanner
 import com.example.tasklist.ui.theme.components.StatusIndicatorBar
 import com.example.tasklist.ui.theme.TaskListTheme
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,11 +36,48 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
-
+import androidx.compose.foundation.Image
+import androidx.compose.material3.ButtonDefaults.buttonColors
+import com.example.tasklist.R
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.*
+import android.app.DatePickerDialog
+import java.util.Calendar
 
 
 @Composable
 fun AddTaskScreen(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+
+    // Hold selected date as a state
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    var selectedDate by remember { mutableStateOf("") }
+
+    val datePickerDialog = remember {
+        DatePickerDialog(
+            context,
+            { _, y, m, d ->
+                selectedDate = "$d/${m + 1}/$y"
+            },
+            year,
+            month,
+            day
+        )
+    }
+
+
     Column (
         modifier = modifier
             .statusBarsPadding()
@@ -65,9 +103,44 @@ fun AddTaskScreen(modifier: Modifier = Modifier) {
 @Composable
 fun AddTaskNavBar(modifier: Modifier = Modifier) {
     Row (
-        modifier = modifier.fillMaxSize()
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .padding(horizontal = 15.dp)
+            .fillMaxSize()
     ) {
-
+        Button (
+            onClick = {/**/},
+            colors = buttonColors(
+                contentColor = Color.Transparent,
+                containerColor = Color.Transparent
+            ),
+            contentPadding = PaddingValues(5.dp),
+            shape = RoundedCornerShape(0.dp),
+            modifier = Modifier.size(30.dp)
+        ) {
+            Image (
+                painter = painterResource(R.drawable.back_icon),
+                contentDescription = "back icon",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(30.dp)
+            )
+        }
+        Button (
+            onClick = {/**/},
+            colors = buttonColors(
+                contentColor = Color.Transparent,
+                containerColor = Color.Transparent
+            ),
+            contentPadding = PaddingValues(5.dp),
+            shape = RoundedCornerShape(0.dp)
+        ) {
+            Text (
+                text = "Add",
+                color = Color.White,
+                fontSize = 20.sp
+            )
+        }
     }
 }
 
@@ -76,7 +149,42 @@ fun AddTaskBody(modifier: Modifier = Modifier) {
     Column (
         modifier = modifier.fillMaxSize()
     ) {
+        // set title field
+        TextField(
+            value = "",
+            onValueChange = {},
+            label = {Text("Title")},
+            singleLine = true,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedTextColor = Color.White,
+                focusedTextColor = Color.White
+            ),
+            modifier = modifier.fillMaxWidth()
+        )
 
+        // set deadline field
+        TextField(
+            value = "",
+            onValueChange = {},
+            label = {Text("Deadline")}
+        )
+
+        // set description field
+        TextField(
+            value = "",
+            onValueChange = {},
+            label = {Text("Description")},
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedTextColor = Color.White,
+                focusedTextColor = Color.White,
+
+            ),
+            modifier = modifier.fillMaxWidth()
+        )
     }
 }
 
