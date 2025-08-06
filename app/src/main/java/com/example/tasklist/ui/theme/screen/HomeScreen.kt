@@ -37,10 +37,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 
 @Composable
-fun HomeScreen (modifier: Modifier = Modifier) {
+fun HomeScreen (
+    navController: NavController,
+    modifier: Modifier = Modifier) {
     Column (
         modifier = modifier
             .statusBarsPadding()
@@ -48,9 +53,11 @@ fun HomeScreen (modifier: Modifier = Modifier) {
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        NavBar(modifier = Modifier
-            .background(Color.Transparent)
-            .weight(0.8f)
+        NavBar(
+            toAddScreen = { navController.navigate("addTaskScreen") },
+            modifier = Modifier
+                .background(Color.Transparent)
+                .weight(0.8f)
         )
         TopBanner(
             date = "Sat/8/02/2025",
@@ -91,7 +98,9 @@ fun TopBanner(
 }
 
 @Composable
-fun NavBar(modifier: Modifier = Modifier) {
+fun NavBar(
+    toAddScreen: () -> Unit,
+    modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -115,7 +124,7 @@ fun NavBar(modifier: Modifier = Modifier) {
             )
         }
         Button(
-            onClick = {/**/},
+            onClick = {toAddScreen()},
             colors = buttonColors(
                 contentColor = Color.Transparent,
                 containerColor = Color.Transparent
@@ -267,6 +276,6 @@ fun TaskTab(
 @Composable
 fun HomeScreenPreview(modifier: Modifier = Modifier) {
     TaskListTheme {
-        HomeScreen()
+        HomeScreen(navController = rememberNavController())
     }
 }

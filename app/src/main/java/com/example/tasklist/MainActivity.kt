@@ -13,6 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.tasklist.ui.theme.TaskListTheme
 import com.example.tasklist.ui.theme.screen.HomeScreen
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.composable
+import com.example.tasklist.ui.theme.screen.AddTaskScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +34,14 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TaskListApp(modifier: Modifier = Modifier) {
-    HomeScreen()
+    val navController: NavHostController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") { HomeScreen(navController = navController) }
+        composable("addTaskScreen") { AddTaskScreen(navController = navController) }
+    }
+
+
 }
 
 @Preview(
@@ -36,8 +49,20 @@ fun TaskListApp(modifier: Modifier = Modifier) {
     showSystemUi = true,
     name = "Task List HomeScreen")
 @Composable
-fun GreetingPreview() {
+fun HomeScreenPreview() {
     TaskListTheme {
-        TaskListApp()
+        HomeScreen(navController = rememberNavController())
     }
 }
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "Task List HomeScreen")
+@Composable
+fun AddTaskScreenPreview() {
+    TaskListTheme {
+        AddTaskScreen(navController = rememberNavController())
+    }
+}
+
