@@ -187,17 +187,14 @@ fun TaskLists(modifier: Modifier = Modifier) {
                 horizontal = 5.dp)
         ) {
             val context = LocalContext.current // Get the app context
-
             val listOfTask = remember { mutableStateListOf<TaskNode>() } // Holds the list of tasks as state
             val taskJsonPath = File(context.filesDir,"task-list.json") // Get the file path of task-list.json
 
-            // Checks if it exists
-            if (!taskJsonPath.exists()) {
-                taskJsonPath.writeText("[]")
-            }
-
-            val taskJsonArray =  JSONArray(taskJsonPath.readText()) // Place the content of task-list.json
-
+            // Place the content of task-list.json if it exists
+            val taskJsonArray = if (taskJsonPath.exists()) {
+                JSONArray(taskJsonPath.readText())
+            } else { JSONArray() }
+            
             // Check if it contains a tasks
             if (taskJsonArray.length() > 0) {
                 val taskLists = mutableListOf<TaskNode>() // Holds all the tasks it contains
