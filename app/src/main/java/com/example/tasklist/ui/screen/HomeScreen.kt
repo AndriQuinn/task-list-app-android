@@ -1,4 +1,4 @@
-package com.example.tasklist.ui.theme.screen
+package com.example.tasklist.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,17 +20,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tasklist.structure.StatusType
-import com.example.tasklist.ui.theme.components.DateBanner
-import com.example.tasklist.ui.theme.components.StatusIndicatorBar
+import com.example.tasklist.ui.components.DateBanner
+import com.example.tasklist.ui.components.StatusIndicatorBar
 import com.example.tasklist.ui.theme.TaskListTheme
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.example.tasklist.R
-import com.example.tasklist.ui.theme.components.StatusIndicator
+import com.example.tasklist.ui.components.StatusIndicator
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
@@ -38,7 +37,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
 

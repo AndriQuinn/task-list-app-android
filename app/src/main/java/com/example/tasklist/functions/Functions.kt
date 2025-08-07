@@ -1,5 +1,10 @@
 package com.example.tasklist.functions
 
+import android.content.Context
+import java.io.File
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 fun toMonthName(month: String): String  = when (month.toInt()) {
     0 ->  "Jan"
     1 ->  "Feb"
@@ -14,4 +19,22 @@ fun toMonthName(month: String): String  = when (month.toInt()) {
     10 ->  "Nov"
     11 ->  "Dec"
     else ->  ""
+}
+
+fun addTaskFile(context: Context, taskTitle: String, taskDeadline: String, taskDescription: String) {
+
+
+    val filePath = File(context.filesDir,"task-list.json")
+
+    if (!filePath.exists()) {
+        filePath.writeText("[]")
+    }
+    val fileContent: JSONArray = JSONArray(filePath.readText())
+    val taskObject = JSONObject()
+    taskObject.put("taskTitle", taskTitle)
+    taskObject.put("taskDeadline", taskDeadline)
+    taskObject.put("taskDescription", taskDescription)
+
+    fileContent.put(taskObject)
+    filePath.writeText(fileContent.toString())
 }
