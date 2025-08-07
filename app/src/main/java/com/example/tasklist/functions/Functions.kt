@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 fun toMonthName(month: String): String  = when (month.toInt()) {
+    // Convert month integers to month name
     0 ->  "Jan"
     1 ->  "Feb"
     2 ->  "Mar"
@@ -23,18 +24,18 @@ fun toMonthName(month: String): String  = when (month.toInt()) {
 
 fun addTaskFile(context: Context, taskTitle: String, taskDeadline: String, taskDescription: String) {
 
+    val filePath = File(context.filesDir,"task-list.json") // Get the file path
 
-    val filePath = File(context.filesDir,"task-list.json")
-
+    // Checks if the file exist in the path, if not creaate one
     if (!filePath.exists()) {
-        filePath.writeText("[]")
+        filePath.writeText("[]") // creates empty json array
     }
-    val fileContent: JSONArray = JSONArray(filePath.readText())
-    val taskObject = JSONObject()
+    val fileContent: JSONArray = JSONArray(filePath.readText()) // place the file content in the variable
+    val taskObject = JSONObject() // Create json object to hold the task datas e.g. title
     taskObject.put("taskTitle", taskTitle)
     taskObject.put("taskDeadline", taskDeadline)
     taskObject.put("taskDescription", taskDescription)
 
-    fileContent.put(taskObject)
-    filePath.writeText(fileContent.toString())
+    fileContent.put(taskObject) // put the task object to the json array
+    filePath.writeText(fileContent.toString()) // rewrite the file with the updated one
 }

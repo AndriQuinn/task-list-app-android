@@ -22,12 +22,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.tasklist.structure.StatusType
 
-
 @Composable
 fun DateBanner(
     modifier: Modifier = Modifier,
     date: String
 ) {
+    // Container banner, horizontally placed
     Row (
         modifier = modifier
             .padding(
@@ -39,16 +39,17 @@ fun DateBanner(
         horizontalArrangement = Arrangement.Center
     ) {
         // Format: day (week) e.g. Tue, month, day (month) e.g. 01, year
+        // day/mm/dd/yyyy
         // e.g. "Sat/8/2/2025" -> [Sat,8,2,2025]
         val extractDate = date.split("/")
 
-        // Left Banner
+        // Left Banner, vertically placed
         Column (
             modifier = modifier.weight(1f).fillMaxSize(),
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = extractDate[0], // Day of the week
+                text = extractDate[0], // Day of the week e.g Mon
                 color = Color.White,
                 fontSize = 50.sp,
                 fontWeight = FontWeight.Bold,
@@ -56,7 +57,7 @@ fun DateBanner(
             )
         }
 
-        // Right Banner
+        // Right Banner, vertically placed
         Column(
             modifier = modifier.weight(1f).fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -83,25 +84,27 @@ fun StatusIndicatorBar(
     workDone: Int,
     workNotDone: Int,
     workOngoing: Int,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
+    // Container for the status indicators, vertically placed
     Column (
         modifier = modifier.padding(horizontal = 20.dp).fillMaxSize(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // Tasks Done
+        // Tasks Done indicator
         StatusIndicator(
             status = workDone.toString(),
             statusType = StatusType.DONE
         )
 
-        // Ongoin tasks
+        // Ongoing tasks indicator
         StatusIndicator(
             status = workOngoing.toString(),
             statusType = StatusType.ONGOING
         )
 
-        // Missed Tasks
+        // Missed Tasks indicator
         StatusIndicator(
             status = workNotDone.toString(),
             statusType = StatusType.MISSEDTASK
@@ -114,20 +117,24 @@ fun StatusIndicator(
     statusType: StatusType,
     status: String = ""
 ) {
+    // Container, horizontally placed
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Status value, empty by default - ""
         Text(
             text = status,
             color = Color.White
         )
         Spacer(Modifier.width(10.dp))
+        // Status icon
         Image(
             painter = painterResource(statusType.icon),
             contentDescription = "status icon",
             modifier = Modifier.size(16.dp)
         )
         Spacer(Modifier.width(5.dp))
+        // Status name e.g. Done
         Text(
             text = statusType.statusName,
             color = Color.White

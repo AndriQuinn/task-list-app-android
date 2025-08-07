@@ -39,41 +39,53 @@ import androidx.compose.ui.text.style.TextAlign
 import java.util.Calendar
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.tasklist.functions.addTaskFile
 
 @Composable
 fun AddTaskScreen(
     navController: NavController,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
+    // Screen container, vertically placed
     Column (
         modifier = modifier
             .statusBarsPadding()
             .background(Color(0xFF1E1E1E))
             .fillMaxSize()
     ) {
-        var taskTitle by remember { mutableStateOf("") }
-        var taskDescription by remember { mutableStateOf("") }
-        var taskDeadline by remember { mutableStateOf("") }
+        val context = LocalContext.current
+        var taskTitle by remember { mutableStateOf("") } // Task title state holder
+        var taskDescription by remember { mutableStateOf("") } // Task description state holder
+        var taskDeadline by remember { mutableStateOf("") } // Task deadline state holder
 
         AddTaskNavBar(
-            backFunction = {navController.popBackStack()},
-            modifier = Modifier
-                .weight(0.8f)
+            addFunction = { addTaskFile(
+                context = context,
+                taskTitle = taskTitle,
+                taskDescription = taskDescription,
+                taskDeadline = taskDeadline
+            ) },
+            backFunction = {navController.popBackStack()}, // Back button
+            modifier = Modifier.weight(0.8f)
         )
         AddTaskBody(
+            title = taskTitle,
+            description = taskDescription,
             setTitleFunction = { title -> taskTitle = title }, // taskTitle setter
             setDeadlineFunction = { deadline -> taskDeadline = deadline }, // taskDeadline setter
             setDescriptionFunction = { description -> taskDescription = description }, // taskDescription setter
-            modifier = Modifier
-                .weight(9.8f)
+            modifier = Modifier.weight(9.8f)
         )
     }
 }
 
 @Composable
 fun AddTaskNavBar(
-    backFunction: () -> Unit,
+    addFunction: () -> Unit, // Add function callback
+    backFunction: () -> Unit, // Back function callback
     modifier: Modifier = Modifier
 ) {
+    // Container for navigation, horizontally placed
     Row (
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -81,8 +93,9 @@ fun AddTaskNavBar(
             .padding(horizontal = 15.dp)
             .fillMaxSize()
     ) {
+        // Back button
         Button (
-            onClick = {backFunction()},
+            onClick = {backFunction()}, // Use back function
             colors = buttonColors(
                 contentColor = Color.Transparent,
                 containerColor = Color.Transparent
@@ -91,6 +104,7 @@ fun AddTaskNavBar(
             shape = RoundedCornerShape(0.dp),
             modifier = Modifier.size(30.dp)
         ) {
+            // Back icon
             Image (
                 painter = painterResource(R.drawable.back_icon),
                 contentDescription = "back icon",
@@ -98,8 +112,9 @@ fun AddTaskNavBar(
                 modifier = Modifier.size(30.dp)
             )
         }
+        // Add button
         Button (
-            onClick = {/**/},
+            onClick = {addFunction()}, // Use add function
             colors = buttonColors(
                 contentColor = Color.Transparent,
                 containerColor = Color.Transparent
@@ -118,14 +133,15 @@ fun AddTaskNavBar(
 
 @Composable
 fun AddTaskBody(
+    title: String,
+    description: String,
     setTitleFunction: (String) -> Unit,
     setDeadlineFunction: (String) -> Unit,
     setDescriptionFunction: (String) -> Unit,
     modifier: Modifier = Modifier
-
 ) {
-    val context = LocalContext.current
-    val calendar = Calendar.getInstance()
+    val context = LocalContext.current // Get app context
+    val calendar = Calendar.getInstance() // Get calendar
     val year = calendar.get(Calendar.YEAR) // Set default year
     val month = calendar.get(Calendar.MONTH) // Set default month
     val day = calendar.get(Calendar.DAY_OF_MONTH) // Set default day
@@ -137,29 +153,33 @@ fun AddTaskBody(
     val datePickerDialog = remember {
         DatePickerDialog(
             context,
-            { _, y, m, d ->
-                selectedDate = "$d/${m + 1}/$y"
-                setDeadlineFunction(selectedDate)
+            { _, y, m, d -> // year, month, day parameters
+                selectedDate = "$d/${m + 1}/$y" // Set the selected date
+                setDeadlineFunction(selectedDate) // Return the selected date tot the parent
             },
+            // Default values if user didnt pick any dates:
             year,
             month,
             day
         )
     }
 
+    // Header
     Text(
         text = "New task",
         color = Color.White,
         fontSize = 25.sp,
         modifier = Modifier.padding(30.dp).fillMaxWidth()
     )
+
+    // Container for task info field e.g. title, vertically placed
     Column (
         modifier = modifier.padding(30.dp).fillMaxSize()
     ) {
         // set title field
         TextField(
-            value = "",
-            onValueChange = {setTitleFunction(it)},
+            value = title,
+            onValueChange = {setTitleFunction(it)}, // Return the value to parent
             label = {Text("Title")},
             singleLine = true,
             colors = TextFieldDefaults.colors(
@@ -173,7 +193,7 @@ fun AddTaskBody(
         Spacer(Modifier.height(10.dp))
         // set deadline field
         Button(
-            onClick = {datePickerDialog.show()},
+            onClick = {datePickerDialog.show()}, // Open calendar
             colors = buttonColors(
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent,
@@ -200,8 +220,8 @@ fun AddTaskBody(
         Spacer(Modifier.height(10.dp))
         // set description field
         TextField(
-            value = "",
-            onValueChange = {setDescriptionFunction(it)},
+            value = description,
+            onValueChange = {setDescriptionFunction(it)}, // Return the value to parent
             label = {Text("Description")},
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
