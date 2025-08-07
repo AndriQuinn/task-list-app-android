@@ -59,7 +59,7 @@ fun AddTaskScreen(
         var taskDeadline by remember { mutableStateOf("") } // Task deadline state holder
 
         AddTaskNavBar(
-            addFunction = { addTaskFile(
+            addFunction = { addTaskFile( // Function to add the task to json file
                 context = context,
                 taskTitle = taskTitle,
                 taskDescription = taskDescription,
@@ -69,8 +69,8 @@ fun AddTaskScreen(
             modifier = Modifier.weight(0.8f)
         )
         AddTaskBody(
-            title = taskTitle,
-            description = taskDescription,
+            title = taskTitle, // Pass the state
+            description = taskDescription, // Pass the state
             setTitleFunction = { title -> taskTitle = title }, // taskTitle setter
             setDeadlineFunction = { deadline -> taskDeadline = deadline }, // taskDeadline setter
             setDescriptionFunction = { description -> taskDescription = description }, // taskDescription setter
@@ -232,7 +232,6 @@ fun AddTaskBody(
             ),
             singleLine = false,
             modifier = Modifier.fillMaxWidth()
-
         )
     }
 }

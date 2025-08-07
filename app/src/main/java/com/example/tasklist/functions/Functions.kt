@@ -1,6 +1,7 @@
 package com.example.tasklist.functions
 
 import android.content.Context
+import com.example.tasklist.structure.StatusType
 import java.io.File
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,6 +36,7 @@ fun addTaskFile(context: Context, taskTitle: String, taskDeadline: String, taskD
     taskObject.put("taskTitle", taskTitle)
     taskObject.put("taskDeadline", taskDeadline)
     taskObject.put("taskDescription", taskDescription)
+    taskObject.put("taskStatus", "ONGOING")
 
     fileContent.put(taskObject) // put the task object to the json array
     filePath.writeText(fileContent.toString()) // rewrite the file with the updated one
