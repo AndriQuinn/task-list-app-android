@@ -35,7 +35,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import android.app.DatePickerDialog
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import java.util.Calendar
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -63,9 +65,11 @@ fun TaskInfoScreen(
         TaskInfoBody(
             modifier = Modifier.weight(9.2f),
             taskNode = TaskNode(
-                title = "Try Task",
-                description = "testing",
-                status = StatusType.ONGOING,
+                title = "Sample Task bfabwjbfjbawjk",
+                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n" +
+                        "\n" +
+                        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\n",
+                status = StatusType.DONE,
                 deadline = "Sat/8/9/2025"
             )
         )
@@ -78,12 +82,12 @@ fun TaskInfoNavBar(
     backFunction: () -> Unit, // Back function callback
     modifier: Modifier = Modifier
 ) {
-    // Container for navigation, horizontally placed
     Row (
-        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(15.dp)
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier
+            .padding(horizontal = 15.dp)
+//            .background(Color.Blue)
             .fillMaxSize()
     ) {
         // Back button
@@ -105,19 +109,21 @@ fun TaskInfoNavBar(
                 modifier = Modifier.size(30.dp)
             )
         }
-        // Mark as done button
-        Button (
-            onClick = {markDone()}, // Use back function
+        // "Mark as done" button
+        Button(
+            onClick = {markDone()},
             colors = buttonColors(
                 contentColor = Color.Transparent,
                 containerColor = Color.Transparent
             ),
-            contentPadding = PaddingValues(5.dp),
             shape = RoundedCornerShape(0.dp),
         ) {
-            Text(
-                text = "Mark as done",
-                color = Color.Green
+            // Back icon
+            Text (
+                text = "Done",
+                color = Color.Green,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
         }
     }
@@ -128,36 +134,72 @@ fun TaskInfoBody(
     taskNode: TaskNode,
     modifier: Modifier = Modifier
 ) {
-    // Header + Status
-    Row (
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(horizontal = 30.dp)
-            .fillMaxWidth()
-    ) {
-        Column () {
-    Text(
-        text = taskNode.title,
-        color = Color.White,
-        fontSize = 25.sp
-    )
-    Spacer(Modifier.height(10.dp))
-    Text(
-        text = "Until ${taskNode.deadline}",
-        color = Color.White,
-        fontSize = 12.sp
-    )
-        }
-        StatusIndicator(statusType= taskNode.status)
-    }
 
     Column (
         modifier = modifier
-            .padding(30.dp)
+            .padding(20.dp)
+//            .background(Color.Green)
             .fillMaxSize()
     ) {
-        
+        // Header + Status
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .weight(0.5f)
+                .fillMaxSize()
+        ) {
+            // Title and deadline
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = taskNode.title,
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.height(10.dp))
+                Text (
+                    text = "Until ${taskNode.deadline}",
+                    fontSize = 12.sp,
+                    color = Color.White
+                )
+            }
+            // Current status
+            Column (
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.weight(1f)
+
+            ) {
+                StatusIndicator(
+                    statusType = taskNode.status
+                )
+            }
+        }
+
+        // Description container
+        Column(
+            modifier = Modifier
+                .weight(1.5f)
+                .padding(15.dp)
+                .fillMaxSize()
+        ) {
+            Text(
+                text = "Description",
+                color = Color.White
+            )
+            Spacer(Modifier.height(20.dp))
+            Text(
+                text = taskNode.description,
+                color = Color.White,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            )
+        }
+
     }
 }
 
