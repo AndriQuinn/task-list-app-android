@@ -40,6 +40,9 @@ import java.util.Calendar
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tasklist.functions.addTaskFile
+import com.example.tasklist.structure.StatusType
+import com.example.tasklist.structure.TaskNode
+import com.example.tasklist.ui.components.StatusIndicator
 
 @Composable
 fun TaskInfoScreen(
@@ -53,21 +56,34 @@ fun TaskInfoScreen(
             .background(Color(0xFF1E1E1E))
             .fillMaxSize()
     ) {
-        TaskInfoNavBar(backFunction = {navController.popBackStack()})
+        TaskInfoNavBar(
+            modifier = Modifier.weight(0.8f),
+            markDone = {},
+            backFunction = {navController.popBackStack()})
+        TaskInfoBody(
+            modifier = Modifier.weight(9.2f),
+            taskNode = TaskNode(
+                title = "Try Task",
+                description = "testing",
+                status = StatusType.ONGOING,
+                deadline = "Sat/8/9/2025"
+            )
+        )
     }
 }
 
 @Composable
 fun TaskInfoNavBar(
+    markDone: () -> Unit,
     backFunction: () -> Unit, // Back function callback
     modifier: Modifier = Modifier
 ) {
     // Container for navigation, horizontally placed
     Row (
-        horizontalArrangement = Arrangement.Start,
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .padding(horizontal = 15.dp)
+        modifier = Modifier
+            .padding(15.dp)
             .fillMaxSize()
     ) {
         // Back button
@@ -89,6 +105,59 @@ fun TaskInfoNavBar(
                 modifier = Modifier.size(30.dp)
             )
         }
+        // Mark as done button
+        Button (
+            onClick = {markDone()}, // Use back function
+            colors = buttonColors(
+                contentColor = Color.Transparent,
+                containerColor = Color.Transparent
+            ),
+            contentPadding = PaddingValues(5.dp),
+            shape = RoundedCornerShape(0.dp),
+        ) {
+            Text(
+                text = "Mark as done",
+                color = Color.Green
+            )
+        }
+    }
+}
+
+@Composable
+fun TaskInfoBody(
+    taskNode: TaskNode,
+    modifier: Modifier = Modifier
+) {
+    // Header + Status
+    Row (
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(horizontal = 30.dp)
+            .fillMaxWidth()
+    ) {
+        Column () {
+    Text(
+        text = taskNode.title,
+        color = Color.White,
+        fontSize = 25.sp
+    )
+    Spacer(Modifier.height(10.dp))
+    Text(
+        text = "Until ${taskNode.deadline}",
+        color = Color.White,
+        fontSize = 12.sp
+    )
+        }
+        StatusIndicator(statusType= taskNode.status)
+    }
+
+    Column (
+        modifier = modifier
+            .padding(30.dp)
+            .fillMaxSize()
+    ) {
+        
     }
 }
 
