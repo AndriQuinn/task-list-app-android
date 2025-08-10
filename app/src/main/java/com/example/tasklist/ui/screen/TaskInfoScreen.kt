@@ -69,7 +69,7 @@ fun TaskInfoScreen(
                 description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n" +
                         "\n" +
                         "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\n",
-                status = StatusType.DONE,
+                status = "DONE",
                 deadline = "Sat/8/9/2025"
             )
         )
@@ -78,8 +78,8 @@ fun TaskInfoScreen(
 
 @Composable
 fun TaskInfoNavBar(
-    markDone: () -> Unit,
-    backFunction: () -> Unit, // Back function callback
+    markDone: () -> Unit,  // Mark done callback function
+    backFunction: () -> Unit, // Back callback function
     modifier: Modifier = Modifier
 ) {
     Row (
@@ -176,7 +176,7 @@ fun TaskInfoBody(
 
             ) {
                 StatusIndicator(
-                    statusType = taskNode.status
+                    statusType = StatusType.valueOf(taskNode.status)
                 )
             }
         }

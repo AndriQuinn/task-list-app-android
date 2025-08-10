@@ -51,7 +51,7 @@ fun DateBanner(
             Text(
                 text = extractDate[0], // Day of the week e.g Mon
                 color = Color.White,
-                fontSize = 50.sp,
+                fontSize = 35.sp,
                 fontWeight = FontWeight.Bold,
 
             )

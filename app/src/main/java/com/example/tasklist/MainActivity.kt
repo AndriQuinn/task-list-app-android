@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.example.tasklist.ui.screen.AddTaskScreen
+import com.example.tasklist.ui.screen.TaskInfoScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,3 +62,13 @@ fun AddTaskScreenPreview() {
     }
 }
 
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "Task List HomeScreen")
+@Composable
+fun TaskInfoScreenPreview() {
+    TaskListTheme {
+        TaskInfoScreen(navController = rememberNavController())
+    }
+}

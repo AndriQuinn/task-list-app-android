@@ -45,14 +45,64 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import com.example.tasklist.functions.getTotal
+import com.example.tasklist.functions.removeFileTask
+import com.example.tasklist.functions.updatePastDeadlines
+import kotlinx.serialization.json.Json
 import java.io.File
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.collections.mutableListOf
 
 @Composable
 fun HomeScreen (
     navController: NavController,
     modifier: Modifier = Modifier) {
+
+
+    // Formatter - e.g. Sat/08/10/2025
+    val formatter = SimpleDateFormat("E/MM/dd/yyyy", Locale.getDefault())
+    // Gets current date using the declared formatter
+    val currentDate = formatter.format(Date())
+
+    val context = LocalContext.current // Get the app context
+
+
+
+    val listOfTask = remember { mutableStateListOf<TaskNode>(TaskNode(
+        title = "Sample Task",
+        deadline = "Sat/8/9/2025",
+        description = "Nothing to see here",
+        status = "ONGOING"
+    )) } // Holds the list of tasks as state
+    val taskJsonPath = File(context.filesDir,"task-list.json") // Get the file path of task-list.json
+
+    // Update the file task if needed
+    updatePastDeadlines(currentDate,context) // Update status if past deadline
+    removeFileTask(currentDate,context) // Removes the file task if 1 month over the deadline
+
+    // Place the content of task-list.json if it exists
+    val taskJsonArray = if (taskJsonPath.exists()) {
+        JSONArray(taskJsonPath.readText())
+    } else { JSONArray() }
+
+
+
+
+    // Check if it contains a tasks
+    if (taskJsonArray.length() > 0) {
+        val taskLists = mutableListOf<TaskNode>() // Holds all the tasks it contains
+        for (tasks in 0 until taskJsonArray.length()) { // Iterate every tasks it contains
+            taskLists.add( // Add the task object to taskLists
+                Json.decodeFromString<TaskNode>(taskJsonArray.getString(tasks))
+            )
+        }
+        listOfTask.addAll(taskLists) // Add them all at once to trigger single recomposition
+    }
+
     Column (
         modifier = modifier
             .statusBarsPadding()
@@ -67,13 +117,14 @@ fun HomeScreen (
                 .weight(0.8f)
         )
         TopBanner(
-            date = "Sat/8/02/2025",
-            workDone = 0,
-            workNotDone = 0,
-            workOngoing = 0,
+            date = currentDate,
+            workDone = getTotal(listOfTask,"DONE"),
+            workNotDone = getTotal(listOfTask,"MISSED"),
+            workOngoing = getTotal(listOfTask,"ONGOING"),
             modifier = Modifier.weight(1.2f)
         )
         TaskLists(
+            listOfTask = listOfTask,
             modifier = Modifier
                 .background(Color.Transparent)
                 .weight(8f)
@@ -89,7 +140,9 @@ fun TopBanner(
     workOngoing: Int,
     modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .padding(vertical = 10.dp)
+            .fillMaxSize()
     ) {
         DateBanner(
             date = date,
@@ -107,7 +160,9 @@ fun TopBanner(
 @Composable
 fun NavBar(
     toAddScreen: () -> Unit, // Function to go AddTaskScreen
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
+    // Container for navigation bar, horizontally placed
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -115,7 +170,7 @@ fun NavBar(
             .padding(horizontal = 15.dp)
             .fillMaxSize()
     ) {
-        // Container for navigation bar, horizontally placed
+        // Container for logo, horizontally placed
         Row(
             modifier = modifier.fillMaxHeight(),
             verticalAlignment = Alignment.CenterVertically
@@ -155,7 +210,9 @@ fun NavBar(
 }
 
 @Composable
-fun TaskLists(modifier: Modifier = Modifier) {
+fun TaskLists(
+    listOfTask: MutableList<TaskNode>,
+    modifier: Modifier = Modifier) {
     Column (
         modifier = modifier
             .padding(30.dp)
@@ -169,12 +226,12 @@ fun TaskLists(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Tasks",
+                text = "Tasks", // Header title
                 color = Color.White,
                 fontSize = 20.sp
             )
             Text(
-                text = "Total",
+                text = "${listOfTask.size}", // Shows number of tasks
                 color = Color.White
             )
         }
@@ -186,34 +243,8 @@ fun TaskLists(modifier: Modifier = Modifier) {
                 vertical = 30.dp,
                 horizontal = 5.dp)
         ) {
-            val context = LocalContext.current // Get the app context
-            val listOfTask = remember { mutableStateListOf<TaskNode>() } // Holds the list of tasks as state
-            val taskJsonPath = File(context.filesDir,"task-list.json") // Get the file path of task-list.json
-
-            // Place the content of task-list.json if it exists
-            val taskJsonArray = if (taskJsonPath.exists()) {
-                JSONArray(taskJsonPath.readText())
-            } else { JSONArray() }
-            
-            // Check if it contains a tasks
-            if (taskJsonArray.length() > 0) {
-                val taskLists = mutableListOf<TaskNode>() // Holds all the tasks it contains
-                for (tasks in 0 until taskJsonArray.length()) { // Iterate every tasks it contains
-                    val taskObject: JSONObject = taskJsonArray.getJSONObject(tasks) // Holds the task object
-                    taskLists.add( // Add the task object to taskLists
-                        TaskNode(
-                            title = taskObject.getString("taskTitle"),
-                            description = taskObject.getString("taskDescription"),
-                            deadline = taskObject.getString("taskDeadline"),
-                            status = StatusType.valueOf(taskObject.getString("taskStatus"))
-                        )
-                    )
-                }
-                listOfTask.addAll(taskLists) // Add them all at once to trigger single recomposition
-            }
-
             // Load all the tasks
-            if (listOfTask.size == 0) {
+            if (listOfTask.size == 0) { // If no tasks found
                 Text(
                     text = "No ongoing tasks",
                     color = Color.White,
@@ -222,9 +253,7 @@ fun TaskLists(modifier: Modifier = Modifier) {
             } else {
                 for (tasks in listOfTask) {
                     TaskTab(
-                        title = tasks.title,
-                        status = tasks.status,
-                        deadline = tasks.deadline,
+                        taskNode = tasks // Compose tasks
                     )
                 }
             }
@@ -235,17 +264,16 @@ fun TaskLists(modifier: Modifier = Modifier) {
 
 @Composable
 fun TaskTab(
-    title: String,
-    deadline: String,
-    status: StatusType,
+    taskNode: TaskNode,
     modifier: Modifier = Modifier
 ) {
     Button (
-        onClick = {/**/},
+        onClick = {/**/}, // Function to go to TaskInfoScreen
         colors = buttonColors(
             containerColor = Color.Transparent,
             contentColor = Color.Transparent
         ),
+        contentPadding = PaddingValues(5.dp),
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
@@ -262,12 +290,13 @@ fun TaskTab(
                 modifier = modifier.weight(1f)
             ) {
                 Text(
-                    text = title,
+                    text = taskNode.title,
                     color = Color.White
                 )
                 Text(
-                    text = deadline,
-                    color = Color.White
+                    text = taskNode.deadline,
+                    color = Color.White,
+                    fontSize = 12.sp
                 )
             }
 
@@ -284,7 +313,7 @@ fun TaskTab(
                 )
 
                 StatusIndicator(
-                    statusType = status
+                    statusType = StatusType.valueOf(taskNode.status)
                 )
             }
         }
