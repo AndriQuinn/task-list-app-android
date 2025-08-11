@@ -1,61 +1,59 @@
 package com.example.tasklist.ui.screen
 
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.tasklist.structure.StatusType
-import com.example.tasklist.ui.components.DateBanner
-import com.example.tasklist.ui.components.StatusIndicatorBar
-import com.example.tasklist.ui.theme.TaskListTheme
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.ui.res.painterResource
-import com.example.tasklist.R
-import com.example.tasklist.ui.components.StatusIndicator
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.tasklist.structure.TaskNode
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
+import com.example.tasklist.R
 import com.example.tasklist.functions.getTotal
 import com.example.tasklist.functions.removeFileTask
 import com.example.tasklist.functions.updatePastDeadlines
+import com.example.tasklist.structure.StatusType
+import com.example.tasklist.structure.TaskNode
+import com.example.tasklist.ui.components.DateBanner
+import com.example.tasklist.ui.components.StatusIndicator
+import com.example.tasklist.ui.components.StatusIndicatorBar
+import com.example.tasklist.ui.theme.TaskListTheme
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.json.JSONArray
 import java.io.File
-import org.json.JSONArray;
-import org.json.JSONObject;
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.collections.mutableListOf
 
 @Composable
 fun HomeScreen (
@@ -72,36 +70,31 @@ fun HomeScreen (
 
 
 
-    val listOfTask = remember { mutableStateListOf<TaskNode>(TaskNode(
-        title = "Sample Task",
-        deadline = "Sat/8/9/2025",
-        description = "Nothing to see here",
-        status = "ONGOING"
-    )) } // Holds the list of tasks as state
+    val listOfTask = remember { mutableStateListOf<TaskNode>() } // Holds the list of tasks as state
     val taskJsonPath = File(context.filesDir,"task-list.json") // Get the file path of task-list.json
 
     // Update the file task if needed
-    updatePastDeadlines(currentDate,context) // Update status if past deadline
-    removeFileTask(currentDate,context) // Removes the file task if 1 month over the deadline
-
-    // Place the content of task-list.json if it exists
-    val taskJsonArray = if (taskJsonPath.exists()) {
-        JSONArray(taskJsonPath.readText())
-    } else { JSONArray() }
-
-
-
-
-    // Check if it contains a tasks
-    if (taskJsonArray.length() > 0) {
-        val taskLists = mutableListOf<TaskNode>() // Holds all the tasks it contains
-        for (tasks in 0 until taskJsonArray.length()) { // Iterate every tasks it contains
-            taskLists.add( // Add the task object to taskLists
-                Json.decodeFromString<TaskNode>(taskJsonArray.getString(tasks))
-            )
-        }
-        listOfTask.addAll(taskLists) // Add them all at once to trigger single recomposition
-    }
+//    updatePastDeadlines(currentDate,context) // Update status if past deadline
+//    removeFileTask(currentDate,context) // Removes the file task if 1 month over the deadline
+//
+//    // Place the content of task-list.json if it exists
+//    val taskJsonArray = if (taskJsonPath.exists()) {
+//        JSONArray(taskJsonPath.readText())
+//    } else { JSONArray() }
+//
+//
+//
+//
+//    // Check if it contains a tasks
+//    if (taskJsonArray.length() > 1) {
+//        val taskLists = mutableListOf<TaskNode>() // Holds all the tasks it contains
+//        for (tasks in 1 until taskJsonArray.length()) { // Iterate every tasks it contains
+//            taskLists.add( // Add the task object to taskLists
+//                Json.decodeFromString<TaskNode>(taskJsonArray.getString(tasks))
+//            )
+//        }
+//        listOfTask.addAll(taskLists) // Add them all at once to trigger single recomposition
+//    }
 
     Column (
         modifier = modifier
@@ -124,6 +117,10 @@ fun HomeScreen (
             modifier = Modifier.weight(1.2f)
         )
         TaskLists(
+            toTaskInfoScreen = {
+                taskData ->
+                    navController.navigate("askInfoScreen/$taskData")
+            },
             listOfTask = listOfTask,
             modifier = Modifier
                 .background(Color.Transparent)
@@ -211,6 +208,7 @@ fun NavBar(
 
 @Composable
 fun TaskLists(
+    toTaskInfoScreen: (String) -> Unit,
     listOfTask: MutableList<TaskNode>,
     modifier: Modifier = Modifier) {
     Column (
@@ -253,7 +251,8 @@ fun TaskLists(
             } else {
                 for (tasks in listOfTask) {
                     TaskTab(
-                        taskNode = tasks // Compose tasks
+                        taskNode = tasks, // Compose tasks
+                        toTaskInfoScreen = { toTaskInfoScreen(it) }
                     )
                 }
             }
@@ -264,11 +263,15 @@ fun TaskLists(
 
 @Composable
 fun TaskTab(
+    toTaskInfoScreen: (String) -> Unit,
     taskNode: TaskNode,
     modifier: Modifier = Modifier
 ) {
     Button (
-        onClick = {/**/}, // Function to go to TaskInfoScreen
+        onClick = {
+            val taskData = Uri.encode(Json.encodeToString(taskNode))
+            toTaskInfoScreen(taskData)
+                  }, // Function to go to TaskInfoScreen
         colors = buttonColors(
             containerColor = Color.Transparent,
             contentColor = Color.Transparent

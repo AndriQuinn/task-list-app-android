@@ -7,5 +7,6 @@ data class TaskNode (
     val title: String,
     val description: String,
     val deadline: String,
-    val status: String
+    val status: String,
+    val id: String
 )

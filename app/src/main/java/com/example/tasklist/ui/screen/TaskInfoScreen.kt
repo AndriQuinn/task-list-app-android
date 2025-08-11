@@ -1,56 +1,49 @@
 package com.example.tasklist.ui.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.foundation.Image
-import androidx.compose.material3.ButtonDefaults.buttonColors
-import com.example.tasklist.R
-import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import android.app.DatePickerDialog
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import java.util.Calendar
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.tasklist.functions.addTaskFile
+import com.example.tasklist.R
+import com.example.tasklist.functions.markTaskDone
 import com.example.tasklist.structure.StatusType
 import com.example.tasklist.structure.TaskNode
 import com.example.tasklist.ui.components.StatusIndicator
 
 @Composable
 fun TaskInfoScreen(
+    taskNode: TaskNode,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     // Screen container, vertically placed
     Column (
         modifier = modifier
@@ -60,18 +53,16 @@ fun TaskInfoScreen(
     ) {
         TaskInfoNavBar(
             modifier = Modifier.weight(0.8f),
-            markDone = {},
+            markDone = {
+                markTaskDone(
+                    id = taskNode.id.toInt(),
+                    context = context
+                )
+            },
             backFunction = {navController.popBackStack()})
         TaskInfoBody(
             modifier = Modifier.weight(9.2f),
-            taskNode = TaskNode(
-                title = "Sample Task bfabwjbfjbawjk",
-                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n" +
-                        "\n" +
-                        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\n",
-                status = "DONE",
-                deadline = "Sat/8/9/2025"
-            )
+            taskNode = taskNode
         )
     }
 }
@@ -203,7 +194,6 @@ fun TaskInfoBody(
     }
 }
 
-
 @Preview(
     showBackground = true,
     showSystemUi = true,
@@ -211,5 +201,13 @@ fun TaskInfoBody(
 )
 @Composable
 fun TaskInfoScreenPreview(modifier: Modifier = Modifier) {
-    TaskInfoScreen(navController = rememberNavController())
+    TaskInfoScreen(
+        taskNode = TaskNode(
+            title = "Sample Task",
+            description = "Idk what to write here",
+            deadline = "1/1/2026",
+            id = "1",
+            status = "ONGOING"
+        ),
+        navController = rememberNavController())
 }

@@ -17,7 +17,7 @@ enum class StatusType (
     ),
 
     MISSEDTASK(
-        statusName = "MISSED TASK",
+        statusName = "MISSED",
         icon = R.drawable.not_done
     )
 }

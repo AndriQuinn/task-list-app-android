@@ -7,14 +7,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.tasklist.ui.theme.TaskListTheme
-import com.example.tasklist.ui.screen.HomeScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.tasklist.structure.TaskNode
 import com.example.tasklist.ui.screen.AddTaskScreen
+import com.example.tasklist.ui.screen.HomeScreen
 import com.example.tasklist.ui.screen.TaskInfoScreen
+import com.example.tasklist.ui.theme.TaskListTheme
+import kotlinx.serialization.json.Json
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +24,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TaskListTheme {
-
+                TaskListApp()
             }
         }
     }
@@ -35,9 +37,15 @@ fun TaskListApp(modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { HomeScreen(navController = navController) }
         composable("addTaskScreen") { AddTaskScreen(navController = navController) }
+        composable("taskInfoScreen/{taskNode}") { backStackEntry ->
+            val taskJson = backStackEntry.arguments?.getString("taskNode")
+            val taskData = Json.decodeFromString<TaskNode>(taskJson.toString())
+            TaskInfoScreen(
+                taskNode = taskData,
+                navController = navController
+            )
+        }
     }
-
-
 }
 
 @Preview(
@@ -69,6 +77,15 @@ fun AddTaskScreenPreview() {
 @Composable
 fun TaskInfoScreenPreview() {
     TaskListTheme {
-        TaskInfoScreen(navController = rememberNavController())
+        TaskInfoScreen(
+            taskNode = TaskNode(
+                title = "Sample Task",
+                description = "Idk what to write here",
+                deadline = "1/1/2026",
+                id = "1",
+                status = "ONGOING"
+            ),
+            navController = rememberNavController()
+        )
     }
 }
