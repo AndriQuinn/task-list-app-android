@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tasklist.R
 import com.example.tasklist.functions.markTaskDone
+import com.example.tasklist.functions.toMonthName
 import com.example.tasklist.structure.StatusType
 import com.example.tasklist.structure.TaskNode
 import com.example.tasklist.ui.components.StatusIndicator
@@ -78,7 +80,6 @@ fun TaskInfoNavBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .padding(horizontal = 15.dp)
-//            .background(Color.Blue)
             .fillMaxSize()
     ) {
         // Back button
@@ -95,7 +96,7 @@ fun TaskInfoNavBar(
             // Back icon
             Image (
                 painter = painterResource(R.drawable.back_icon),
-                contentDescription = "back icon",
+                contentDescription = stringResource(R.string.back_icon_desc_txt),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(30.dp)
             )
@@ -111,7 +112,7 @@ fun TaskInfoNavBar(
         ) {
             // Back icon
             Text (
-                text = "Done",
+                text = stringResource(R.string.done_button_txt),
                 color = Color.Green,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -126,13 +127,14 @@ fun TaskInfoBody(
     modifier: Modifier = Modifier
 ) {
 
+    // Container for task info, vertically placed
     Column (
         modifier = modifier
             .padding(20.dp)
-//            .background(Color.Green)
             .fillMaxSize()
     ) {
         // Header + Status
+        // Container, vertically placed
         Row (
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -154,7 +156,9 @@ fun TaskInfoBody(
                 )
                 Spacer(Modifier.height(10.dp))
                 Text (
-                    text = "Until ${taskNode.deadline}",
+                    text = "Until ${toMonthName(taskNode.deadline.split("/")[1])} ${
+                        taskNode.deadline.split("/")[0]} ${
+                        taskNode.deadline.split("/")[2]}",
                     fontSize = 12.sp,
                     color = Color.White
                 )
@@ -180,7 +184,7 @@ fun TaskInfoBody(
                 .fillMaxSize()
         ) {
             Text(
-                text = "Description",
+                text = stringResource(R.string.description_header_txt),
                 color = Color.White
             )
             Spacer(Modifier.height(20.dp))

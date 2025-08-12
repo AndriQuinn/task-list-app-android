@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -107,7 +108,7 @@ fun AddTaskNavBar(
             // Back icon
             Image (
                 painter = painterResource(R.drawable.back_icon),
-                contentDescription = "back icon",
+                contentDescription = stringResource(R.string.back_icon_desc_txt),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(30.dp)
             )
@@ -123,7 +124,7 @@ fun AddTaskNavBar(
             shape = RoundedCornerShape(0.dp)
         ) {
             Text (
-                text = "Add",
+                text = stringResource(R.string.add_button_rxr),
                 color = Color.White,
                 fontSize = 20.sp
             )
@@ -166,21 +167,25 @@ fun AddTaskBody(
 
     // Header
     Text(
-        text = "New task",
+        text = stringResource(R.string.new_task_header_txt),
         color = Color.White,
         fontSize = 25.sp,
-        modifier = Modifier.padding(30.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(30.dp)
+            .fillMaxWidth()
     )
 
     // Container for task info field e.g. title, vertically placed
     Column (
-        modifier = modifier.padding(30.dp).fillMaxSize()
+        modifier = modifier
+            .padding(30.dp)
+            .fillMaxSize()
     ) {
         // set title field
         TextField(
             value = title,
             onValueChange = {setTitleFunction(it)}, // Return the value to parent
-            label = {Text("Title")},
+            label = {Text(stringResource(R.string.title_txt))},
             singleLine = true,
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
@@ -203,16 +208,20 @@ fun AddTaskBody(
         ) {
             if (selectedDate.isBlank()) {
                 Text(
-                    text ="Pick a deadline",
+                    text = stringResource(R.string.pick_a_deadline_txt),
                     color = Color.White,
-                    modifier = modifier.padding(start = 10.dp).fillMaxWidth(),
+                    modifier = modifier
+                        .padding(start = 10.dp)
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Start
                 )
             } else {
                 Text(
                     text = selectedDate,
                     color = Color.White,
-                    modifier = modifier.padding(start = 10.dp).fillMaxWidth(),
+                    modifier = modifier
+                        .padding(start = 10.dp)
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Start
                 )
             }
@@ -222,7 +231,7 @@ fun AddTaskBody(
         TextField(
             value = description,
             onValueChange = {setDescriptionFunction(it)}, // Return the value to parent
-            label = {Text("Description")},
+            label = {Text(stringResource(R.string.description_txt))},
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,

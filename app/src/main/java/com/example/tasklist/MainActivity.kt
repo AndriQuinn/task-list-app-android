@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
 fun TaskListApp(modifier: Modifier = Modifier) {
     val navController: NavHostController = rememberNavController()
 
+    // Navigation address
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { HomeScreen(navController = navController) }
         composable("addTaskScreen") { AddTaskScreen(navController = navController) }
@@ -51,7 +52,8 @@ fun TaskListApp(modifier: Modifier = Modifier) {
 @Preview(
     showBackground = true,
     showSystemUi = true,
-    name = "Task List HomeScreen")
+    name = "Task List HomeScreen"
+)
 @Composable
 fun HomeScreenPreview() {
     TaskListTheme {

@@ -69,28 +69,29 @@ fun updatePastDeadlines(currentDate: String, context: Context) {
     } else { JSONArray() }
 
     // Check if empty, if empty stop the function
-    if (updatedList.length() == 1) {
+    if (updatedList.length() <= 1) {
         return
-    }
+    } else {
 
-    // Iterate through the task
-    for (task in 1 until  updatedList.length()) {
-        // Check all tasks that are not missed yet
-        if (updatedList.getJSONObject(task).getString("status") != "MISSED") {
-            val deadline = updatedList.getJSONObject(task).getString("deadline").split("/") // Get the deadline
-            val date = currentDate.split("/") // Get the current date
+        // Iterate through the task
+        for (task in 1 until updatedList.length()) {
+            // Check all tasks that are not missed yet
+            if (updatedList.getJSONObject(task).getString("status") != "MISSED") {
+                val deadline = updatedList.getJSONObject(task).getString("deadline")
+                    .split("/") // Get the deadline
+                val date = currentDate.split("/") // Get the current date
 
-            if (date[1].toInt() > deadline[1].toInt()) { // Check if the current date is 1 month late than the deadline
-                updatedList.getJSONObject(task).put("status","MISSED") // Update the status
-            }
-            else if (date[1].toInt() == deadline[1].toInt() && date[2].toInt() > deadline[2].toInt()) { // Check if the current date if the day is past deadline
-                updatedList.getJSONObject(task).put("status","MISSED") // Update status
+                if (date[1].toInt() > deadline[0].toInt()) { // Check if the current date is 1 month late than the deadline
+                    updatedList.getJSONObject(task).put("status", "MISSED") // Update the status
+                } else if (date[1].toInt() == deadline[0].toInt() && date[2].toInt() > deadline[1].toInt()) { // Check if the current date if the day is past deadline
+                    updatedList.getJSONObject(task).put("status", "MISSED") // Update status
+                }
             }
         }
-    }
 
-    // Overwrites the file with the updated one
-    filePath.writeText(updatedList.toString())
+        // Overwrites the file with the updated one
+        filePath.writeText(updatedList.toString())
+    }
 }
 
 // Automatically removes file task after a month over the deadline

@@ -31,7 +31,6 @@ fun DateBanner(
     Row (
         modifier = modifier
             .padding(
-//                vertical = 10.dp,
                 horizontal = 20.dp
             )
             .fillMaxSize(),

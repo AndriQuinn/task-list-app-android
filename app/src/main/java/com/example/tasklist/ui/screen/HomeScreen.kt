@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tasklist.R
 import com.example.tasklist.functions.getTotal
 import com.example.tasklist.functions.removeFileTask
+import com.example.tasklist.functions.toMonthName
 import com.example.tasklist.functions.updatePastDeadlines
 import com.example.tasklist.structure.StatusType
 import com.example.tasklist.structure.TaskNode
@@ -58,8 +60,8 @@ import java.util.Locale
 @Composable
 fun HomeScreen (
     navController: NavController,
-    modifier: Modifier = Modifier) {
-
+    modifier: Modifier = Modifier
+) {
 
     // Formatter - e.g. Sat/08/10/2025
     val formatter = SimpleDateFormat("E/MM/dd/yyyy", Locale.getDefault())
@@ -67,34 +69,28 @@ fun HomeScreen (
     val currentDate = formatter.format(Date())
 
     val context = LocalContext.current // Get the app context
-
-
-
     val listOfTask = remember { mutableStateListOf<TaskNode>() } // Holds the list of tasks as state
     val taskJsonPath = File(context.filesDir,"task-list.json") // Get the file path of task-list.json
 
     // Update the file task if needed
-//    updatePastDeadlines(currentDate,context) // Update status if past deadline
-//    removeFileTask(currentDate,context) // Removes the file task if 1 month over the deadline
+    updatePastDeadlines(currentDate,context) // Update status if past deadline
+    removeFileTask(currentDate,context) // Removes the file task if 1 month over the deadline
 //
-//    // Place the content of task-list.json if it exists
-//    val taskJsonArray = if (taskJsonPath.exists()) {
-//        JSONArray(taskJsonPath.readText())
-//    } else { JSONArray() }
-//
-//
-//
-//
-//    // Check if it contains a tasks
-//    if (taskJsonArray.length() > 1) {
-//        val taskLists = mutableListOf<TaskNode>() // Holds all the tasks it contains
-//        for (tasks in 1 until taskJsonArray.length()) { // Iterate every tasks it contains
-//            taskLists.add( // Add the task object to taskLists
-//                Json.decodeFromString<TaskNode>(taskJsonArray.getString(tasks))
-//            )
-//        }
-//        listOfTask.addAll(taskLists) // Add them all at once to trigger single recomposition
-//    }
+    // Place the content of task-list.json if it exists
+    val taskJsonArray = if (taskJsonPath.exists()) {
+        JSONArray(taskJsonPath.readText())
+    } else { JSONArray() }
+
+    // Check if it contains a tasks
+    if (taskJsonArray.length() > 1) {
+        val taskLists = mutableListOf<TaskNode>() // Holds all the tasks it contains
+        for (tasks in 1 until taskJsonArray.length()) { // Iterate every tasks it contains
+            taskLists.add( // Add the task object to taskLists
+                Json.decodeFromString<TaskNode>(taskJsonArray.getString(tasks))
+            )
+        }
+        listOfTask.addAll(taskLists) // Add them all at once to trigger single recomposition
+    }
 
     Column (
         modifier = modifier
@@ -135,7 +131,8 @@ fun TopBanner(
     workDone: Int,
     workNotDone: Int,
     workOngoing: Int,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier
             .padding(vertical = 10.dp)
@@ -175,12 +172,12 @@ fun NavBar(
             // Logo
             Image(
                 painter = painterResource(R.drawable.logo_icon),
-                contentDescription = "logo image",
+                contentDescription = stringResource(R.string.logo_image_desc_txt),
                 modifier = Modifier.size(30.dp)
             )
             Spacer(Modifier.width(5.dp))
             Text (
-                text = "TaskList",
+                text = stringResource(R.string.tasklist_header_txt),
                 color = Color.White
             )
         }
@@ -199,7 +196,7 @@ fun NavBar(
             // Add icon
             Image(
                 painter = painterResource(R.drawable.add_icon),
-                contentDescription = "add icon",
+                contentDescription = stringResource(R.string.add_icon_desc_txt),
                 modifier = Modifier.size(30.dp)
             )
         }
@@ -210,7 +207,8 @@ fun NavBar(
 fun TaskLists(
     toTaskInfoScreen: (String) -> Unit,
     listOfTask: MutableList<TaskNode>,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
     Column (
         modifier = modifier
             .padding(30.dp)
@@ -224,7 +222,7 @@ fun TaskLists(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Tasks", // Header title
+                text = stringResource(R.string.tasks_txt), // Header title
                 color = Color.White,
                 fontSize = 20.sp
             )
@@ -244,7 +242,7 @@ fun TaskLists(
             // Load all the tasks
             if (listOfTask.size == 0) { // If no tasks found
                 Text(
-                    text = "No ongoing tasks",
+                    text = stringResource(R.string.no_ongoing_tasks_txt),
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth())
@@ -297,7 +295,9 @@ fun TaskTab(
                     color = Color.White
                 )
                 Text(
-                    text = taskNode.deadline,
+                    text = "Until ${toMonthName(taskNode.deadline.split("/")[1])} ${
+                        taskNode.deadline.split("/")[0]} ${
+                        taskNode.deadline.split("/")[2]}",
                     color = Color.White,
                     fontSize = 12.sp
                 )
@@ -311,7 +311,7 @@ fun TaskTab(
                 modifier = modifier.weight(1f)
             ) {
                 Text(
-                    text = "Status:",
+                    text = stringResource(R.string.status_txt),
                     color = Color.White
                 )
 
