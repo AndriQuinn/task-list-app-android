@@ -45,12 +45,13 @@ fun DateBanner(
         // Left Banner, vertically placed
         Column (
             modifier = modifier.weight(1f).fillMaxSize(),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.End
         ) {
             Text(
                 text = extractDate[0], // Day of the week e.g Mon
                 color = Color.White,
-                fontSize = 35.sp,
+                fontSize = 45.sp,
                 fontWeight = FontWeight.Bold,
 
             )

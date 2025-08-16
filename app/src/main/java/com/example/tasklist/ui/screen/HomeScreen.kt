@@ -1,7 +1,6 @@
 package com.example.tasklist.ui.screen
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,8 +24,11 @@ import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -184,14 +186,20 @@ fun NavBar(
                 color = Color.White
             )
         }
-
+        var clickOnce by remember {mutableStateOf(true)}
         // Button to go to AddTaskScreen
         Button(
-            onClick = {toAddScreen()},
+            onClick = {
+                clickOnce = false
+                toAddScreen()
+            },
             colors = buttonColors(
                 contentColor = Color.Transparent,
-                containerColor = Color.Transparent
+                containerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = Color.Transparent
             ),
+            enabled = clickOnce,
             contentPadding = PaddingValues(5.dp),
             shape = RoundedCornerShape(0.dp),
             modifier = Modifier.size(30.dp)
@@ -271,14 +279,18 @@ fun TaskTab(
     taskNode: TaskNode,
     modifier: Modifier = Modifier
 ) {
+    var clickOnce by remember {mutableStateOf(true)}
     Button (
         onClick = {
+            clickOnce = false
             val taskData = Uri.encode(Json.encodeToString(taskNode))
-            toTaskInfoScreen(taskData)
-                  }, // Function to go to TaskInfoScreen
+            toTaskInfoScreen(taskData) // Function to go to TaskInfoScreen
+        },
         colors = buttonColors(
             containerColor = Color.Transparent,
-            contentColor = Color.Transparent
+            contentColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = Color.Transparent
         ),
         contentPadding = PaddingValues(5.dp),
         modifier = modifier.fillMaxWidth()

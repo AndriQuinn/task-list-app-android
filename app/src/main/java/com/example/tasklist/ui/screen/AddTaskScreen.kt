@@ -40,6 +40,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tasklist.R
 import com.example.tasklist.functions.addTaskFile
+import com.example.tasklist.functions.toMonthName
 import java.util.Calendar
 
 @Composable
@@ -117,12 +118,19 @@ fun AddTaskNavBar(
             )
         }
         // Add button
+        var clickOnce by remember { mutableStateOf(true) }
         Button (
-            onClick = {addFunction()}, // Use add function
+            onClick = {
+                clickOnce = false
+                addFunction() // Use add function
+            },
             colors = buttonColors(
                 contentColor = Color.Transparent,
-                containerColor = Color.Transparent
+                containerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = Color.Transparent
             ),
+            enabled = clickOnce,
             contentPadding = PaddingValues(5.dp),
             shape = RoundedCornerShape(0.dp)
         ) {
@@ -219,8 +227,9 @@ fun AddTaskBody(
                     textAlign = TextAlign.Start
                 )
             } else {
+                val deadlineDate = selectedDate.split("/")
                 Text(
-                    text = selectedDate,
+                    text = "Deadline: ${toMonthName(deadlineDate[0].toString())} ${deadlineDate[1]} ${deadlineDate[2]}",
                     color = Color.White,
                     modifier = modifier
                         .padding(start = 10.dp)

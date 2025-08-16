@@ -17,6 +17,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,8 +64,11 @@ fun TaskInfoScreen(
                     id = taskNode.id.toInt(),
                     context = context
                 )
+                navController.popBackStack()
             },
-            backFunction = {navController.popBackStack()})
+            backFunction = {navController.popBackStack()},
+            status = taskNode.status
+        )
         TaskInfoBody(
             modifier = Modifier.weight(9.2f),
             taskNode = taskNode
@@ -71,6 +78,7 @@ fun TaskInfoScreen(
 
 @Composable
 fun TaskInfoNavBar(
+    status: String,
     markDone: () -> Unit,  // Mark done callback function
     backFunction: () -> Unit, // Back callback function
     modifier: Modifier = Modifier
@@ -82,13 +90,20 @@ fun TaskInfoNavBar(
             .padding(horizontal = 15.dp)
             .fillMaxSize()
     ) {
+        var isClick by remember { mutableStateOf(true) }
         // Back button
         Button (
-            onClick = {backFunction()}, // Use back function
+            onClick = {
+                backFunction()
+                isClick = false 
+            }, // Use back function
             colors = buttonColors(
                 contentColor = Color.Transparent,
-                containerColor = Color.Transparent
+                containerColor = Color.Transparent,
+                disabledContentColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent
             ),
+            enabled = isClick,
             contentPadding = PaddingValues(5.dp),
             shape = RoundedCornerShape(0.dp),
             modifier = Modifier.size(30.dp)
@@ -102,17 +117,24 @@ fun TaskInfoNavBar(
             )
         }
         // "Mark as done" button
+
         Button(
             onClick = {markDone()},
             colors = buttonColors(
                 contentColor = Color.Transparent,
-                containerColor = Color.Transparent
+                containerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = Color.Transparent
             ),
+            enabled = if (status == "ONGOING") { true } else {false},
             shape = RoundedCornerShape(0.dp),
         ) {
             // Back icon
             Text (
-                text = stringResource(R.string.done_button_txt),
+                text = stringResource(
+                    if (status == "ONGOING") { R.string.done_button_txt }
+                    else {R.string.blank_txt}
+                ),
                 color = Color.Green,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -156,8 +178,8 @@ fun TaskInfoBody(
                 )
                 Spacer(Modifier.height(10.dp))
                 Text (
-                    text = "Until ${toMonthName(taskNode.deadline.split("/")[1])} ${
-                        taskNode.deadline.split("/")[0]} ${
+                    text = "Until ${toMonthName(taskNode.deadline.split("/")[0])} ${
+                        taskNode.deadline.split("/")[1]} ${
                         taskNode.deadline.split("/")[2]}",
                     fontSize = 12.sp,
                     color = Color.White

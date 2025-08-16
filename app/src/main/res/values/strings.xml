@@ -14,4 +14,5 @@
     <string name="add_button_rxr">Add</string>
     <string name="done_button_txt">Done</string>
     <string name="description_header_txt">Description</string>
+    <string name="blank_txt" />
 </resources>

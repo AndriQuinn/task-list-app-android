@@ -131,8 +131,9 @@ fun markTaskDone(id: Int,context: Context) {
 
     if (file.length() > 1) {
         for (task in 1 until file.length()) {
-            if (file.getJSONObject(task).get("id").toString().toInt() == id) {
+            if (file.getJSONObject(task).getInt("id") == id) {
                 file.getJSONObject(task).put("status","DONE")
+                filePath.writeText(file.toString())
                 break
             }
         }
