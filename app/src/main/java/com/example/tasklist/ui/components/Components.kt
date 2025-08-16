@@ -106,7 +106,7 @@ fun StatusIndicatorBar(
         // Missed Tasks indicator
         StatusIndicator(
             status = workNotDone.toString(),
-            statusType = StatusType.MISSEDTASK
+            statusType = StatusType.MISSED
         )
     }
 }

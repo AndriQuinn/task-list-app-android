@@ -1,5 +1,9 @@
 package com.example.tasklist
 
+import com.example.tasklist.structure.TaskNode
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import org.json.JSONObject
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -11,7 +15,6 @@ import org.junit.Assert.*
  */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun checkIfConvertProperly() {
     }
 }

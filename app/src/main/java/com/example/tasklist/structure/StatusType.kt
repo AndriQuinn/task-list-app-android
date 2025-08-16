@@ -16,7 +16,7 @@ enum class StatusType (
         icon = R.drawable.ongoing
     ),
 
-    MISSEDTASK(
+    MISSED(
         statusName = "MISSED",
         icon = R.drawable.not_done
     )

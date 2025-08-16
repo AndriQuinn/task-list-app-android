@@ -1,6 +1,7 @@
 package com.example.tasklist.ui.screen
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -75,7 +76,7 @@ fun HomeScreen (
     // Update the file task if needed
     updatePastDeadlines(currentDate,context) // Update status if past deadline
     removeFileTask(currentDate,context) // Removes the file task if 1 month over the deadline
-//
+
     // Place the content of task-list.json if it exists
     val taskJsonArray = if (taskJsonPath.exists()) {
         JSONArray(taskJsonPath.readText())
@@ -116,6 +117,7 @@ fun HomeScreen (
             toTaskInfoScreen = {
                 taskData ->
                     navController.navigate("askInfoScreen/$taskData")
+
             },
             listOfTask = listOfTask,
             modifier = Modifier
@@ -134,6 +136,7 @@ fun TopBanner(
     modifier: Modifier = Modifier
 ) {
     Row(
+        horizontalArrangement = Arrangement.Center,
         modifier = modifier
             .padding(vertical = 10.dp)
             .fillMaxSize()
@@ -295,8 +298,8 @@ fun TaskTab(
                     color = Color.White
                 )
                 Text(
-                    text = "Until ${toMonthName(taskNode.deadline.split("/")[1])} ${
-                        taskNode.deadline.split("/")[0]} ${
+                    text = "Until ${toMonthName(taskNode.deadline.split("/")[0])} ${
+                        taskNode.deadline.split("/")[1]} ${
                         taskNode.deadline.split("/")[2]}",
                     color = Color.White,
                     fontSize = 12.sp

@@ -29,10 +29,9 @@ fun addTaskFile(context: Context, taskTitle: String, taskDeadline: String, taskD
 
     // Checks if the file exist in the path, if not create one
     if (!filePath.exists()) {
-        filePath.writeText("[]") // creates empty json array
-        val file = JSONArray(filePath.readText())
-        val length = JSONObject().put("length","0") // Create a json object length for id's
-        file.put(length)
+        val file = JSONArray()
+        val lengthObj = JSONObject().put("length","0") // Create a json object length for id's
+        file.put(lengthObj)
         filePath.writeText(file.toString())
     }
     val fileContent = JSONArray(filePath.readText()) // place the file content in the variable
@@ -61,18 +60,17 @@ fun getTotal(list: MutableList<TaskNode>,type: String): Int {
 }
 
 fun updatePastDeadlines(currentDate: String, context: Context) {
-    val filePath = File(context.filesDir,"task-list.json")
+    val filePath = File(context.filesDir, "task-list.json")
 
     // Store the content
     val updatedList = if (filePath.exists()) {
         JSONArray(filePath.readText())
-    } else { JSONArray() }
-
-    // Check if empty, if empty stop the function
-    if (updatedList.length() <= 1) {
-        return
     } else {
+        JSONArray()
+    }
 
+    // Check if empty, if empty skip the function
+    if (updatedList.length() > 1) {
         // Iterate through the task
         for (task in 1 until updatedList.length()) {
             // Check all tasks that are not missed yet
@@ -96,30 +94,32 @@ fun updatePastDeadlines(currentDate: String, context: Context) {
 
 // Automatically removes file task after a month over the deadline
 fun removeFileTask(currentDate: String,context: Context) {
-    val date = currentDate.split("/") // Get date array
+
+    val date = currentDate.split("/") // date array, e.g. E/MM/dd/yyyy
     val filePath = File(context.filesDir, "task-list.json") // Declare file path
     // Checks if file exists
     val file = if (filePath.exists()) {
         JSONArray(filePath.readText())
     } else { JSONArray() }
 
-
     // If file holds a task
     if (file.length() > 1) {
         for (task in 1 until file.length()) {
-            val deadline = file.getJSONObject(task).get("deadline").toString().split("/") // Get deadline
+            // Get task deadline, e.g. mm/dd/yyyy
+            val deadline = file.getJSONObject(task).get("deadline").toString().split("/")
 
             // Checks if the deadline is 1 month over the deadline
-            if (deadline[1].toInt() > date[1].toInt() && deadline[2].toInt() > date[2].toInt()) {
+            if (
+                (date[1].toInt() > deadline[0].toInt() && date[2].toInt() > deadline[1].toInt())  ||
+                (date[1].toInt() - deadline[0].toInt() > 1) // error
+                ) {
                 file.remove(task)
             }
         }
-    } else {
-        return
-    }
 
-    // Update the file
-    filePath.writeText(file.toString())
+        // Update the file
+        filePath.writeText(file.toString())
+    }
 }
 
 fun markTaskDone(id: Int,context: Context) {

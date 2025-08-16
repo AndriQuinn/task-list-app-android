@@ -60,12 +60,15 @@ fun AddTaskScreen(
         var taskDeadline by remember { mutableStateOf("") } // Task deadline state holder
 
         AddTaskNavBar(
-            addFunction = { addTaskFile( // Function to add the task to json file
-                context = context,
-                taskTitle = taskTitle,
-                taskDescription = taskDescription,
-                taskDeadline = taskDeadline
-            ) },
+            addFunction = {
+                addTaskFile( // Function to add the task to json file
+                    context = context,
+                    taskTitle = taskTitle,
+                    taskDescription = taskDescription,
+                    taskDeadline = taskDeadline
+                )
+                navController.popBackStack()
+            },
             backFunction = {navController.popBackStack()}, // Back button
             modifier = Modifier.weight(0.8f)
         )
@@ -155,7 +158,7 @@ fun AddTaskBody(
         DatePickerDialog(
             context,
             { _, y, m, d -> // year, month, day parameters
-                selectedDate = "$d/${m + 1}/$y" // Set the selected date
+                selectedDate = "${m + 1}/$d/$y" // Set the selected date
                 setDeadlineFunction(selectedDate) // Return the selected date tot the parent
             },
             // Default values if user didn't pick any dates:
