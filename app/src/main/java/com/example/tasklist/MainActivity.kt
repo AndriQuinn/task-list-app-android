@@ -48,9 +48,7 @@ fun TaskListApp(modifier: Modifier = Modifier) {
         ) { backStackEntry ->
             val taskUri = backStackEntry.arguments?.getString("taskData")
             val taskUriDecoded = Uri.decode(taskUri.toString())
-            Log.d("navigation",taskUriDecoded)
             val taskData = Json.decodeFromString<TaskNode>(taskUriDecoded)
-
 
             TaskInfoScreen(
                 taskNode = taskData,

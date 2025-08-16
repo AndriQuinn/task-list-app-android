@@ -110,8 +110,8 @@ fun removeFileTask(currentDate: String,context: Context) {
 
             // Checks if the deadline is 1 month over the deadline
             if (
-                (date[1].toInt() > deadline[0].toInt() && date[2].toInt() > deadline[1].toInt())  ||
-                (date[1].toInt() - deadline[0].toInt() > 1) // error
+                (date[1].toInt() - deadline[0].toInt() > 1) ||
+                (date[1].toInt() > deadline[0].toInt() && date[2].toInt() > deadline[1].toInt())
                 ) {
                 file.remove(task)
             }

@@ -116,7 +116,7 @@ fun HomeScreen (
         TaskLists(
             toTaskInfoScreen = {
                 taskData ->
-                    navController.navigate("askInfoScreen/$taskData")
+                    navController.navigate("taskInfoScreen/${taskData}")
 
             },
             listOfTask = listOfTask,
@@ -238,9 +238,12 @@ fun TaskLists(
         // Tasks list
         // Container for lists of tasks, vertically arranged
         Column (
-            modifier = Modifier.padding(
-                vertical = 30.dp,
-                horizontal = 5.dp)
+            modifier = Modifier
+                .padding(
+                    vertical = 30.dp,
+                    horizontal = 5.dp
+                )
+                .verticalScroll(rememberScrollState())
         ) {
             // Load all the tasks
             if (listOfTask.size == 0) { // If no tasks found
