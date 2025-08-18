@@ -77,7 +77,7 @@ fun HomeScreen (
 
     // Update the file task if needed
     updatePastDeadlines(currentDate,context) // Update status if past deadline
-    removeFileTask(currentDate,context) // Removes the file task if 1 month over the deadline
+    removeFileTask(currentDate,context) // Removes the file task 1 month after the deadline
 
     // Place the content of task-list.json if it exists
     val taskJsonArray = if (taskJsonPath.exists()) {
@@ -87,7 +87,7 @@ fun HomeScreen (
     // Check if it contains a tasks
     if (taskJsonArray.length() > 1) {
         val taskLists = mutableListOf<TaskNode>() // Holds all the tasks it contains
-        for (tasks in 1 until taskJsonArray.length()) { // Iterate every tasks it contains
+        for (tasks in (taskJsonArray.length()-1) downTo 1) { // Iterate every tasks it contains
             taskLists.add( // Add the task object to taskLists
                 Json.decodeFromString<TaskNode>(taskJsonArray.getString(tasks))
             )

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Text
@@ -41,6 +42,7 @@ import com.example.tasklist.functions.toMonthName
 import com.example.tasklist.structure.StatusType
 import com.example.tasklist.structure.TaskNode
 import com.example.tasklist.ui.components.StatusIndicator
+import androidx.compose.foundation.rememberScrollState
 
 @Composable
 fun TaskInfoScreen(
@@ -126,7 +128,7 @@ fun TaskInfoNavBar(
                 disabledContainerColor = Color.Transparent,
                 disabledContentColor = Color.Transparent
             ),
-            enabled = if (status == "ONGOING") { true } else {false},
+            enabled = status == "ONGOING",
             shape = RoundedCornerShape(0.dp),
         ) {
             // Back icon
@@ -213,7 +215,9 @@ fun TaskInfoBody(
             Text(
                 text = taskNode.description,
                 color = Color.White,
-                modifier = Modifier.padding(horizontal = 10.dp)
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .verticalScroll(rememberScrollState())
             )
         }
 
@@ -235,5 +239,6 @@ fun TaskInfoScreenPreview(modifier: Modifier = Modifier) {
             id = "1",
             status = "ONGOING"
         ),
-        navController = rememberNavController())
+        navController = rememberNavController()
+    )
 }

@@ -55,6 +55,9 @@ fun AddTaskScreen(
             .background(Color(0xFF1E1E1E))
             .fillMaxSize()
     ) {
+
+        var checkFields by remember {mutableStateOf(false)}
+        var isFieldCompleted by remember {mutableStateOf(false)}
         val context = LocalContext.current
         var taskTitle by remember { mutableStateOf("") } // Task title state holder
         var taskDescription by remember { mutableStateOf("") } // Task description state holder
@@ -62,15 +65,21 @@ fun AddTaskScreen(
 
         AddTaskNavBar(
             addFunction = {
-                addTaskFile( // Function to add the task to json file
-                    context = context,
-                    taskTitle = taskTitle,
-                    taskDescription = taskDescription,
-                    taskDeadline = taskDeadline
-                )
-                navController.popBackStack()
+                checkFields = true
+                if (taskTitle.isNotBlank() && taskDeadline.isNotBlank() && taskDescription.isNotBlank()) {
+
+                    isFieldCompleted = true
+                    addTaskFile( // Function to add the task to json file
+                        context = context,
+                        taskTitle = taskTitle,
+                        taskDescription = taskDescription,
+                        taskDeadline = taskDeadline
+                    )
+                    navController.popBackStack()
+                }
             },
             backFunction = {navController.popBackStack()}, // Back button
+            isFieldCompleted = isFieldCompleted,
             modifier = Modifier.weight(0.8f)
         )
         AddTaskBody(
@@ -79,6 +88,7 @@ fun AddTaskScreen(
             setTitleFunction = { title -> taskTitle = title }, // taskTitle setter
             setDeadlineFunction = { deadline -> taskDeadline = deadline }, // taskDeadline setter
             setDescriptionFunction = { description -> taskDescription = description }, // taskDescription setter
+            checkField = checkFields,
             modifier = Modifier.weight(9.8f)
         )
     }
@@ -86,6 +96,7 @@ fun AddTaskScreen(
 
 @Composable
 fun AddTaskNavBar(
+    isFieldCompleted: Boolean,
     addFunction: () -> Unit, // Add function callback
     backFunction: () -> Unit, // Back function callback
     modifier: Modifier = Modifier
@@ -118,10 +129,10 @@ fun AddTaskNavBar(
             )
         }
         // Add button
-        var clickOnce by remember { mutableStateOf(true) }
+        var lockButton by remember { mutableStateOf(false) }
         Button (
             onClick = {
-                clickOnce = false
+                lockButton = isFieldCompleted == true
                 addFunction() // Use add function
             },
             colors = buttonColors(
@@ -130,7 +141,7 @@ fun AddTaskNavBar(
                 disabledContainerColor = Color.Transparent,
                 disabledContentColor = Color.Transparent
             ),
-            enabled = clickOnce,
+            enabled = !lockButton,
             contentPadding = PaddingValues(5.dp),
             shape = RoundedCornerShape(0.dp)
         ) {
@@ -147,6 +158,7 @@ fun AddTaskNavBar(
 fun AddTaskBody(
     title: String,
     description: String,
+    checkField: Boolean,
     setTitleFunction: (String) -> Unit,
     setDeadlineFunction: (String) -> Unit,
     setDescriptionFunction: (String) -> Unit,
@@ -204,6 +216,9 @@ fun AddTaskBody(
                 unfocusedTextColor = Color.White,
                 focusedTextColor = Color.White
             ),
+            isError = if (checkField) {
+                title.isBlank()
+            } else {false},
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(10.dp))
@@ -220,7 +235,9 @@ fun AddTaskBody(
             if (selectedDate.isBlank()) {
                 Text(
                     text = stringResource(R.string.pick_a_deadline_txt),
-                    color = Color.White,
+                    color = if (checkField) {
+                        Color(0xFFFFAEB7)
+                    } else {Color.White},
                     modifier = modifier
                         .padding(start = 10.dp)
                         .fillMaxWidth(),
@@ -229,7 +246,7 @@ fun AddTaskBody(
             } else {
                 val deadlineDate = selectedDate.split("/")
                 Text(
-                    text = "Deadline: ${toMonthName(deadlineDate[0].toString())} ${deadlineDate[1]} ${deadlineDate[2]}",
+                    text = "Deadline: ${toMonthName(deadlineDate[0])} ${deadlineDate[1]} ${deadlineDate[2]}",
                     color = Color.White,
                     modifier = modifier
                         .padding(start = 10.dp)
@@ -249,8 +266,10 @@ fun AddTaskBody(
                 unfocusedContainerColor = Color.Transparent,
                 unfocusedTextColor = Color.White,
                 focusedTextColor = Color.White,
-
             ),
+            isError = if (checkField) {
+                description.isBlank()
+            } else {false},
             singleLine = false,
             modifier = Modifier.fillMaxWidth()
         )
