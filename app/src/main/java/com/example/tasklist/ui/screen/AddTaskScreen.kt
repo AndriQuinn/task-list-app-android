@@ -110,15 +110,21 @@ fun AddTaskNavBar(
             .fillMaxSize()
     ) {
         // Back button
+        var clickOnce by remember {mutableStateOf(true)}
         Button (
-            onClick = {backFunction()}, // Use back function
+            onClick = {
+                if (!clickOnce) {return@Button}
+                clickOnce = false
+                backFunction()}
+            , // Use back function
             colors = buttonColors(
                 contentColor = Color.Transparent,
                 containerColor = Color.Transparent
             ),
-            contentPadding = PaddingValues(5.dp),
+            enabled = clickOnce,
+            contentPadding = PaddingValues(15.dp),
             shape = RoundedCornerShape(0.dp),
-            modifier = Modifier.size(30.dp)
+            modifier = Modifier.size(50.dp)
         ) {
             // Back icon
             Image (
@@ -132,6 +138,7 @@ fun AddTaskNavBar(
         var lockButton by remember { mutableStateOf(false) }
         Button (
             onClick = {
+                if (lockButton) {return@Button}
                 lockButton = isFieldCompleted == true
                 addFunction() // Use add function
             },
@@ -142,7 +149,7 @@ fun AddTaskNavBar(
                 disabledContentColor = Color.Transparent
             ),
             enabled = !lockButton,
-            contentPadding = PaddingValues(5.dp),
+            contentPadding = PaddingValues(10.dp),
             shape = RoundedCornerShape(0.dp)
         ) {
             Text (
@@ -230,7 +237,7 @@ fun AddTaskBody(
                 contentColor = Color.Transparent,
             ),
             shape = RoundedCornerShape(0.dp),
-            contentPadding = PaddingValues(0.dp)
+            contentPadding = PaddingValues(10.dp)
         ) {
             if (selectedDate.isBlank()) {
                 Text(

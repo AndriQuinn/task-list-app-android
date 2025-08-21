@@ -96,6 +96,7 @@ fun TaskInfoNavBar(
         // Back button
         Button (
             onClick = {
+                if (!isClick) {return@Button}
                 backFunction()
                 isClick = false 
             }, // Use back function
@@ -106,9 +107,9 @@ fun TaskInfoNavBar(
                 disabledContainerColor = Color.Transparent
             ),
             enabled = isClick,
-            contentPadding = PaddingValues(5.dp),
+            contentPadding = PaddingValues(15.dp),
             shape = RoundedCornerShape(0.dp),
-            modifier = Modifier.size(30.dp)
+            modifier = Modifier.size(50.dp)
         ) {
             // Back icon
             Image (
@@ -121,14 +122,18 @@ fun TaskInfoNavBar(
         // "Mark as done" button
 
         Button(
-            onClick = {markDone()},
+            onClick = {
+                if (!isClick) {return@Button}
+                isClick = false
+                markDone()
+            },
             colors = buttonColors(
                 contentColor = Color.Transparent,
                 containerColor = Color.Transparent,
                 disabledContainerColor = Color.Transparent,
                 disabledContentColor = Color.Transparent
             ),
-            enabled = status == "ONGOING",
+            enabled = status == "ONGOING" && isClick,
             shape = RoundedCornerShape(0.dp),
         ) {
             // Back icon

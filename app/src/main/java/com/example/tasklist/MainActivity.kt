@@ -16,7 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.tasklist.structure.TaskNode
 import com.example.tasklist.ui.screen.AddTaskScreen
-import com.example.tasklist.ui.screen.HomeScreen
+import com.example.tasklist.ui.screen.home.HomeScreen
 import com.example.tasklist.ui.screen.TaskInfoScreen
 import com.example.tasklist.ui.theme.TaskListTheme
 import kotlinx.serialization.json.Json

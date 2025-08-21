@@ -1,4 +1,4 @@
-package com.example.tasklist.ui.screen
+package com.example.tasklist.ui.screen.home
 
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -25,7 +25,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,9 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tasklist.R
 import com.example.tasklist.functions.getTotal
-import com.example.tasklist.functions.removeFileTask
 import com.example.tasklist.functions.toMonthName
-import com.example.tasklist.functions.updatePastDeadlines
 import com.example.tasklist.structure.StatusType
 import com.example.tasklist.structure.TaskNode
 import com.example.tasklist.ui.components.DateBanner
@@ -54,8 +51,6 @@ import com.example.tasklist.ui.components.StatusIndicatorBar
 import com.example.tasklist.ui.theme.TaskListTheme
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.json.JSONArray
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -63,7 +58,8 @@ import java.util.Locale
 @Composable
 fun HomeScreen (
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel = HomeViewModel()
 ) {
 
     // Formatter - e.g. Sat/08/10/2025
@@ -72,28 +68,8 @@ fun HomeScreen (
     val currentDate = formatter.format(Date())
 
     val context = LocalContext.current // Get the app context
-    val listOfTask = remember { mutableStateListOf<TaskNode>() } // Holds the list of tasks as state
-    val taskJsonPath = File(context.filesDir,"task-list.json") // Get the file path of task-list.json
-
-    // Update the file task if needed
-    updatePastDeadlines(currentDate,context) // Update status if past deadline
-    removeFileTask(currentDate,context) // Removes the file task 1 month after the deadline
-
-    // Place the content of task-list.json if it exists
-    val taskJsonArray = if (taskJsonPath.exists()) {
-        JSONArray(taskJsonPath.readText())
-    } else { JSONArray() }
-
-    // Check if it contains a tasks
-    if (taskJsonArray.length() > 1) {
-        val taskLists = mutableListOf<TaskNode>() // Holds all the tasks it contains
-        for (tasks in (taskJsonArray.length()-1) downTo 1) { // Iterate every tasks it contains
-            taskLists.add( // Add the task object to taskLists
-                Json.decodeFromString<TaskNode>(taskJsonArray.getString(tasks))
-            )
-        }
-        listOfTask.addAll(taskLists) // Add them all at once to trigger single recomposition
-    }
+    homeViewModel.refresh(currentDate,context) // Refresh the task container
+    val listOfTask = homeViewModel.taskList // Load the content from viewmodel
 
     Column (
         modifier = modifier
@@ -190,6 +166,7 @@ fun NavBar(
         // Button to go to AddTaskScreen
         Button(
             onClick = {
+                if (!clickOnce) {return@Button}
                 clickOnce = false
                 toAddScreen()
             },
@@ -200,9 +177,9 @@ fun NavBar(
                 disabledContentColor = Color.Transparent
             ),
             enabled = clickOnce,
-            contentPadding = PaddingValues(5.dp),
+            contentPadding = PaddingValues(15.dp),
             shape = RoundedCornerShape(0.dp),
-            modifier = Modifier.size(30.dp)
+            modifier = Modifier.size(50.dp)
         ) {
             // Add icon
             Image(
@@ -217,7 +194,7 @@ fun NavBar(
 @Composable
 fun TaskLists(
     toTaskInfoScreen: (String) -> Unit,
-    listOfTask: MutableList<TaskNode>,
+    listOfTask: List<TaskNode>,
     modifier: Modifier = Modifier
 ) {
     Column (
@@ -254,7 +231,7 @@ fun TaskLists(
                 .verticalScroll(rememberScrollState())
         ) {
             // Load all the tasks
-            if (listOfTask.size == 0) { // If no tasks found
+            if (listOfTask.isEmpty()) { // If no tasks found
                 Text(
                     text = stringResource(R.string.no_ongoing_tasks_txt),
                     color = Color.White,
