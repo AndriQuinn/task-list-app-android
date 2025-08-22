@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tasklist.functions.toMonthName
-import com.example.tasklist.structure.StatusType
+import com.example.tasklist.ui.model.StatusType
 
 @Composable
 fun DateBanner(

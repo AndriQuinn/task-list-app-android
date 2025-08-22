@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -21,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -48,11 +51,21 @@ fun AddTaskScreen(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
+    var isRendered by remember {mutableStateOf(false)}
+    val transitionOffset = if (isRendered) 0.dp else -(50).dp
+
+    LaunchedEffect(Unit) {
+        isRendered = true
+    }
+
     // Screen container, vertically placed
     Column (
         modifier = modifier
             .statusBarsPadding()
             .background(Color(0xFF1E1E1E))
+            .offset {
+                IntOffset(transitionOffset.roundToPx(), 0)
+            }
             .fillMaxSize()
     ) {
 

@@ -1,6 +1,8 @@
 package com.example.tasklist.ui.screen.home
 
 import android.net.Uri
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -24,7 +27,9 @@ import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,19 +41,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tasklist.R
+import com.example.tasklist.data.model.TaskNode
 import com.example.tasklist.functions.getTotal
 import com.example.tasklist.functions.toMonthName
-import com.example.tasklist.structure.StatusType
-import com.example.tasklist.structure.TaskNode
 import com.example.tasklist.ui.components.DateBanner
 import com.example.tasklist.ui.components.StatusIndicator
 import com.example.tasklist.ui.components.StatusIndicatorBar
+import com.example.tasklist.ui.model.StatusType
 import com.example.tasklist.ui.theme.TaskListTheme
+import kotlinx.coroutines.delay
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
@@ -197,6 +204,9 @@ fun TaskLists(
     listOfTask: List<TaskNode>,
     modifier: Modifier = Modifier
 ) {
+
+    var delay by remember { mutableLongStateOf(200) }
+
     Column (
         modifier = modifier
             .padding(30.dp)
@@ -240,10 +250,13 @@ fun TaskLists(
             } else {
                 for (tasks in listOfTask) {
                     TaskTab(
+                        delay = delay,
                         taskNode = tasks, // Compose tasks
                         toTaskInfoScreen = { toTaskInfoScreen(it) }
                     )
+                    delay += 25
                 }
+
             }
 
         }
@@ -252,10 +265,23 @@ fun TaskLists(
 
 @Composable
 fun TaskTab(
+    delay: Long,
     toTaskInfoScreen: (String) -> Unit,
     taskNode: TaskNode,
     modifier: Modifier = Modifier
 ) {
+    var fadeIn by remember {mutableStateOf(false)}
+    val offsetX by animateDpAsState(
+        targetValue = if (fadeIn) 0.dp else -(300.dp),
+        animationSpec = tween(durationMillis = 200),
+        label = "fade in"
+    )
+
+    LaunchedEffect(Unit) {
+        delay(delay)
+        fadeIn = true
+    }
+
     var clickOnce by remember {mutableStateOf(true)}
     Button (
         onClick = {
@@ -270,7 +296,11 @@ fun TaskTab(
             disabledContentColor = Color.Transparent
         ),
         contentPadding = PaddingValues(5.dp),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .offset {
+                IntOffset(offsetX.roundToPx(), 0)
+            }
+            .fillMaxWidth()
     ) {
         Row(
             modifier = Modifier

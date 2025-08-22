@@ -3,7 +3,7 @@ package com.example.tasklist.ui.screen.home
 import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.example.tasklist.structure.TaskNode
+import com.example.tasklist.data.model.TaskNode
 import org.json.JSONArray
 import java.io.File
 import kotlinx.serialization.json.Json

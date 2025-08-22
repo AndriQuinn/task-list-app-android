@@ -1,4 +1,4 @@
-package com.example.tasklist.structure
+package com.example.tasklist.ui.model
 
 import com.example.tasklist.R
 

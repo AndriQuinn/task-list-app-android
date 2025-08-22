@@ -1,12 +1,6 @@
 package com.example.tasklist
 
-import com.example.tasklist.structure.TaskNode
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import org.json.JSONObject
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).

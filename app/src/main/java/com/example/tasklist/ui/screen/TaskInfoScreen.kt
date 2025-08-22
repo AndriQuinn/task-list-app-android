@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -39,10 +40,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tasklist.R
 import com.example.tasklist.functions.markTaskDone
 import com.example.tasklist.functions.toMonthName
-import com.example.tasklist.structure.StatusType
-import com.example.tasklist.structure.TaskNode
+import com.example.tasklist.ui.model.StatusType
+import com.example.tasklist.data.model.TaskNode
 import com.example.tasklist.ui.components.StatusIndicator
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.unit.IntOffset
 
 @Composable
 fun TaskInfoScreen(
@@ -51,12 +54,21 @@ fun TaskInfoScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    var isRendered by remember {mutableStateOf(false)}
+    val transitionOffset = if (isRendered) 0.dp else -(50).dp
+
+    LaunchedEffect(Unit) {
+        isRendered = true
+    }
 
     // Screen container, vertically placed
     Column (
         modifier = modifier
             .statusBarsPadding()
             .background(Color(0xFF1E1E1E))
+            .offset {
+                IntOffset(transitionOffset.roundToPx(), 0)
+            }
             .fillMaxSize()
     ) {
         TaskInfoNavBar(

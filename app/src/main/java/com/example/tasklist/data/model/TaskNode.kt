@@ -1,4 +1,4 @@
-package com.example.tasklist.structure
+package com.example.tasklist.data.model
 
 import kotlinx.serialization.Serializable
 

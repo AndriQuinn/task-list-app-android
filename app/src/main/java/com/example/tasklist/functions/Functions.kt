@@ -1,7 +1,7 @@
 package com.example.tasklist.functions
 
 import android.content.Context
-import com.example.tasklist.structure.TaskNode
+import com.example.tasklist.data.model.TaskNode
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -49,7 +49,7 @@ fun addTaskFile(context: Context, taskTitle: String, taskDeadline: String, taskD
     filePath.writeText(fileContent.toString()) // rewrite the file with the updated one
 }
 
-fun getTotal(list: List<TaskNode>,type: String): Int {
+fun getTotal(list: List<TaskNode>, type: String): Int {
     var total = 0
     for (tasks in list) {
         if (tasks.status == type) {
