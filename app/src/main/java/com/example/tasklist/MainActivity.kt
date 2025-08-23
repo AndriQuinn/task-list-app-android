@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.EnterTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,8 +38,13 @@ class MainActivity : ComponentActivity() {
 fun TaskListApp(modifier: Modifier = Modifier) {
     val navController: NavHostController = rememberNavController()
 
-    // Navigation address
-    NavHost(navController = navController, startDestination = "home") {
+    // Navigation address and options
+    NavHost(
+        navController = navController,
+        startDestination = "home",
+        enterTransition = { EnterTransition.None },
+        popEnterTransition = { EnterTransition.None },
+    ) {
         composable("home") { HomeScreen(navController = navController) }
         composable("addTaskScreen") { AddTaskScreen(navController = navController) }
         composable(

@@ -1,6 +1,9 @@
 package com.example.tasklist.ui.screen
 
 import android.app.DatePickerDialog
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -52,7 +55,15 @@ fun AddTaskScreen(
     modifier: Modifier = Modifier
 ) {
     var isRendered by remember {mutableStateOf(false)}
-    val transitionOffset = if (isRendered) 0.dp else -(50).dp
+    val transitionOffset by animateDpAsState(
+        targetValue = if (isRendered) 0.dp else -(1000).dp,
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    BackHandler {
+        isRendered = false
+        navController.popBackStack()
+    }
 
     LaunchedEffect(Unit) {
         isRendered = true
@@ -88,10 +99,14 @@ fun AddTaskScreen(
                         taskDescription = taskDescription,
                         taskDeadline = taskDeadline
                     )
+                    isRendered = false
                     navController.popBackStack()
                 }
             },
-            backFunction = {navController.popBackStack()}, // Back button
+            backFunction = {
+                isRendered = false
+                navController.popBackStack() // Back button
+            },
             isFieldCompleted = isFieldCompleted,
             modifier = Modifier.weight(0.8f)
         )

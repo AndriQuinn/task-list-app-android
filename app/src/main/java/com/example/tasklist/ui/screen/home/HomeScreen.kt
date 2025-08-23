@@ -272,8 +272,8 @@ fun TaskTab(
 ) {
     var fadeIn by remember {mutableStateOf(false)}
     val offsetX by animateDpAsState(
-        targetValue = if (fadeIn) 0.dp else -(300.dp),
-        animationSpec = tween(durationMillis = 200),
+        targetValue = if (fadeIn) 0.dp else -(500.dp),
+        animationSpec = tween(durationMillis = 400),
         label = "fade in"
     )
 
