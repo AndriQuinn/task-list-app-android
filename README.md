@@ -22,3 +22,11 @@
 - Mini dashboard which includes:
   - Current date
   - No. of Completed, Ongoing, and Missed Tasks
+
+# Download
+
+  Github
+  https://github.com/AndriQuinn/task-list-app-android/releases/download/v1.0.0/task-list.apk
+
+  GDrive
+  https://drive.google.com/file/d/1swQ61j7Go7xRINEjr5IQEMU6gFjmRfJI/view?usp=sharing
