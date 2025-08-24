@@ -285,6 +285,7 @@ fun TaskTab(
     var clickOnce by remember {mutableStateOf(true)}
     Button (
         onClick = {
+            if (!clickOnce) {return@Button}
             clickOnce = false
             val taskData = Uri.encode(Json.encodeToString(taskNode))
             toTaskInfoScreen(taskData) // Function to go to TaskInfoScreen
@@ -295,6 +296,7 @@ fun TaskTab(
             disabledContainerColor = Color.Transparent,
             disabledContentColor = Color.Transparent
         ),
+        enabled = clickOnce,
         contentPadding = PaddingValues(5.dp),
         modifier = modifier
             .offset {
@@ -359,7 +361,7 @@ fun TaskTab(
     name = "Homescreen"
 )
 @Composable
-fun HomeScreenPreview(modifier: Modifier = Modifier) {
+fun HomeScreenPreview() {
     TaskListTheme {
         HomeScreen(navController = rememberNavController())
     }

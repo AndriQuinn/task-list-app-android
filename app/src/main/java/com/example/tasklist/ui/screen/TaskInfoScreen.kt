@@ -1,8 +1,5 @@
 package com.example.tasklist.ui.screen
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,10 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -41,14 +38,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tasklist.R
+import com.example.tasklist.data.model.TaskNode
 import com.example.tasklist.functions.markTaskDone
 import com.example.tasklist.functions.toMonthName
-import com.example.tasklist.ui.model.StatusType
-import com.example.tasklist.data.model.TaskNode
 import com.example.tasklist.ui.components.StatusIndicator
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.unit.IntOffset
+import com.example.tasklist.ui.model.StatusType
 
 @Composable
 fun TaskInfoScreen(
@@ -57,29 +51,12 @@ fun TaskInfoScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var isRendered by remember {mutableStateOf(false)}
-    val transitionOffset by animateDpAsState(
-        targetValue = if (isRendered) 0.dp else -(1000).dp,
-        animationSpec = tween(durationMillis = 300)
-    )
-
-    BackHandler {
-        isRendered = false
-        navController.popBackStack()
-    }
-
-    LaunchedEffect(Unit) {
-        isRendered = true
-    }
 
     // Screen container, vertically placed
     Column (
         modifier = modifier
             .statusBarsPadding()
             .background(Color(0xFF1E1E1E))
-            .offset {
-                IntOffset(transitionOffset.roundToPx(), 0)
-            }
             .fillMaxSize()
     ) {
         TaskInfoNavBar(
@@ -89,13 +66,9 @@ fun TaskInfoScreen(
                     id = taskNode.id.toInt(),
                     context = context
                 )
-                isRendered = false
                 navController.popBackStack()
             },
-            backFunction = {
-                isRendered = false
-                navController.popBackStack()
-            },
+            backFunction = { navController.popBackStack() },
             status = taskNode.status
         )
         TaskInfoBody(
@@ -119,13 +92,13 @@ fun TaskInfoNavBar(
             .padding(horizontal = 15.dp)
             .fillMaxSize()
     ) {
-        var isClick by remember { mutableStateOf(true) }
+        var clickOnce by remember { mutableStateOf(true) }
         // Back button
         Button (
             onClick = {
-                if (!isClick) {return@Button}
+                if (!clickOnce) {return@Button}
+                clickOnce = false
                 backFunction()
-                isClick = false 
             }, // Use back function
             colors = buttonColors(
                 contentColor = Color.Transparent,
@@ -133,7 +106,7 @@ fun TaskInfoNavBar(
                 disabledContentColor = Color.Transparent,
                 disabledContainerColor = Color.Transparent
             ),
-            enabled = isClick,
+            enabled = clickOnce,
             contentPadding = PaddingValues(15.dp),
             shape = RoundedCornerShape(0.dp),
             modifier = Modifier.size(50.dp)
@@ -150,8 +123,8 @@ fun TaskInfoNavBar(
 
         Button(
             onClick = {
-                if (!isClick) {return@Button}
-                isClick = false
+                if (!clickOnce) {return@Button}
+                clickOnce = false
                 markDone()
             },
             colors = buttonColors(
@@ -160,7 +133,7 @@ fun TaskInfoNavBar(
                 disabledContainerColor = Color.Transparent,
                 disabledContentColor = Color.Transparent
             ),
-            enabled = status == "ONGOING" && isClick,
+            enabled = status == "ONGOING" && clickOnce,
             shape = RoundedCornerShape(0.dp),
         ) {
             // Back icon
@@ -262,7 +235,7 @@ fun TaskInfoBody(
     name = "Add task screen"
 )
 @Composable
-fun TaskInfoScreenPreview(modifier: Modifier = Modifier) {
+fun TaskInfoScreenPreview() {
     TaskInfoScreen(
         taskNode = TaskNode(
             title = "Sample Task",
