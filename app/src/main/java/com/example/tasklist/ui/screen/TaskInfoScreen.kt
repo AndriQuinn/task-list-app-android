@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,29 +50,44 @@ import com.example.tasklist.ui.model.StatusType
 fun TaskInfoScreen(
     taskNode: TaskNode,
     navController: NavController,
-    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
+    Scaffold (
+        topBar = {
+            TaskInfoNavBar(
+                markDone = {
+                    markTaskDone(
+                        id = taskNode.id.toInt(),
+                        context = context
+                    )
+                    navController.popBackStack()
+                },
+                backFunction = { navController.popBackStack() },
+                status = taskNode.status,
+                modifier = Modifier.background(Color(0xFF1E1E1E))
+            )
+        },
+        modifier = Modifier.statusBarsPadding()
+    ) { innerPadding ->
+        TaskInfoScreenBody(
+            taskNode = taskNode,
+            modifier = Modifier.padding(innerPadding)
+        )
+    }
+}
+
+@Composable
+fun TaskInfoScreenBody(
+    taskNode: TaskNode,
+    modifier: Modifier = Modifier
+) {
     // Screen container, vertically placed
     Column (
         modifier = modifier
-            .statusBarsPadding()
             .background(Color(0xFF1E1E1E))
             .fillMaxSize()
     ) {
-        TaskInfoNavBar(
-            modifier = Modifier.weight(0.8f),
-            markDone = {
-                markTaskDone(
-                    id = taskNode.id.toInt(),
-                    context = context
-                )
-                navController.popBackStack()
-            },
-            backFunction = { navController.popBackStack() },
-            status = taskNode.status
-        )
         TaskInfoBody(
             modifier = Modifier.weight(9.2f),
             taskNode = taskNode
@@ -89,8 +106,8 @@ fun TaskInfoNavBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
+            .fillMaxWidth()
             .padding(horizontal = 15.dp)
-            .fillMaxSize()
     ) {
         var clickOnce by remember { mutableStateOf(true) }
         // Back button
@@ -155,7 +172,6 @@ fun TaskInfoBody(
     taskNode: TaskNode,
     modifier: Modifier = Modifier
 ) {
-
     // Container for task info, vertically placed
     Column (
         modifier = modifier

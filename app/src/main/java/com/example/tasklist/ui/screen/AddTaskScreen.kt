@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -46,54 +47,50 @@ import java.util.Calendar
 @Composable
 fun AddTaskScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
 ) {
-
     // Screen container, vertically placed
-    Column (
-        modifier = modifier
-            .statusBarsPadding()
-            .background(Color(0xFF1E1E1E))
-            .fillMaxSize()
-    ) {
+    var checkFields by remember {mutableStateOf(false)}
+    var isFieldCompleted by remember {mutableStateOf(false)}
+    val context = LocalContext.current
+    var taskTitle by remember { mutableStateOf("") } // Task title state holder
+    var taskDescription by remember { mutableStateOf("") } // Task description state holder
+    var taskDeadline by remember { mutableStateOf("") } // Task deadline state holder
 
-        var checkFields by remember {mutableStateOf(false)}
-        var isFieldCompleted by remember {mutableStateOf(false)}
-        val context = LocalContext.current
-        var taskTitle by remember { mutableStateOf("") } // Task title state holder
-        var taskDescription by remember { mutableStateOf("") } // Task description state holder
-        var taskDeadline by remember { mutableStateOf("") } // Task deadline state holder
+    Scaffold (
+        topBar = {
+            AddTaskNavBar(
+                addFunction = {
+                    checkFields = true
+                    if (taskTitle.isNotBlank() && taskDeadline.isNotBlank() && taskDescription.isNotBlank()) {
 
-        AddTaskNavBar(
-            addFunction = {
-                checkFields = true
-                if (taskTitle.isNotBlank() && taskDeadline.isNotBlank() && taskDescription.isNotBlank()) {
-
-                    isFieldCompleted = true
-                    addTaskFile( // Function to add the task to json file
-                        context = context,
-                        taskTitle = taskTitle,
-                        taskDescription = taskDescription,
-                        taskDeadline = taskDeadline
-                    )
-                    navController.popBackStack()
-                }
-            },
-            backFunction = { navController.popBackStack() },// Back button
-            isFieldCompleted = isFieldCompleted,
-            modifier = Modifier.weight(0.8f)
-        )
-        AddTaskBody(
+                        isFieldCompleted = true
+                        addTaskFile( // Function to add the task to json file
+                            context = context,
+                            taskTitle = taskTitle,
+                            taskDescription = taskDescription,
+                            taskDeadline = taskDeadline
+                        )
+                        navController.popBackStack()
+                    }
+                              },
+                backFunction = { navController.popBackStack() },// Back button
+                isFieldCompleted = isFieldCompleted,
+            )
+        },
+        modifier = Modifier.statusBarsPadding()
+    ) { innerPadding ->
+        AddTaskScreenBody(
             title = taskTitle, // Pass the state
             description = taskDescription, // Pass the state
             setTitleFunction = { title -> taskTitle = title }, // taskTitle setter
             setDeadlineFunction = { deadline -> taskDeadline = deadline }, // taskDeadline setter
             setDescriptionFunction = { description -> taskDescription = description }, // taskDescription setter
             checkField = checkFields,
-            modifier = Modifier.weight(9.8f)
+            modifier = Modifier.padding(innerPadding)
         )
     }
 }
+
 
 @Composable
 fun AddTaskNavBar(
@@ -107,8 +104,9 @@ fun AddTaskNavBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .background(Color(0xFF1E1E1E))
             .padding(horizontal = 15.dp)
-            .fillMaxSize()
+            .fillMaxWidth()
     ) {
         // Back button
         var clickOnce by remember {mutableStateOf(true)}
@@ -163,7 +161,7 @@ fun AddTaskNavBar(
 }
 
 @Composable
-fun AddTaskBody(
+fun AddTaskScreenBody(
     title: String,
     description: String,
     checkField: Boolean,
@@ -196,22 +194,23 @@ fun AddTaskBody(
         )
     }
 
-    // Header
-    Text(
-        text = stringResource(R.string.new_task_header_txt),
-        color = Color.White,
-        fontSize = 25.sp,
-        modifier = Modifier
-            .padding(30.dp)
-            .fillMaxWidth()
-    )
-
     // Container for task info field e.g. title, vertically placed
     Column (
         modifier = modifier
+            .background(Color(0xFF1E1E1E))
             .padding(30.dp)
             .fillMaxSize()
     ) {
+        // Header
+        Text(
+            text = stringResource(R.string.new_task_header_txt),
+            color = Color.White,
+            fontSize = 25.sp,
+            modifier = Modifier
+                .padding(vertical = 30.dp)
+                .fillMaxWidth()
+        )
+
         // set title field
         TextField(
             value = title,

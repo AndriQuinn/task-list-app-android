@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,7 +23,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,10 +65,8 @@ import java.util.Locale
 @Composable
 fun HomeScreen (
     navController: NavController,
-    modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = HomeViewModel()
 ) {
-
     // Formatter - e.g. Sat/08/10/2025
     val formatter = SimpleDateFormat("E/MM/dd/yyyy", Locale.getDefault())
     // Gets current date using the declared formatter
@@ -78,19 +76,39 @@ fun HomeScreen (
     homeViewModel.refresh(currentDate,context) // Refresh the task container
     val listOfTask = homeViewModel.taskList // Load the content from viewmodel
 
+    Scaffold (
+        topBar = {
+            NavBar(
+                toAddScreen = { navController.navigate("addTaskScreen") },
+                modifier = Modifier
+                    .background(Color(0xFF1E1E1E))
+                    .fillMaxWidth()
+            )
+        },
+        modifier = Modifier.statusBarsPadding()
+    ) { innerPadding ->
+        HomeScreenBody(
+            modifier = Modifier.padding(innerPadding),
+            currentDate = currentDate,
+            listOfTask = listOfTask,
+            navController = navController
+        )
+    }
+}
+
+@Composable
+fun HomeScreenBody (
+    currentDate: String,
+    listOfTask: List<TaskNode>,
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
     Column (
         modifier = modifier
-            .statusBarsPadding()
             .background(Color(0xFF1E1E1E))
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        NavBar(
-            toAddScreen = { navController.navigate("addTaskScreen") },
-            modifier = Modifier
-                .background(Color.Transparent)
-                .weight(0.8f)
-        )
         TopBanner(
             date = currentDate,
             workDone = getTotal(listOfTask,"DONE"),
@@ -100,8 +118,8 @@ fun HomeScreen (
         )
         TaskLists(
             toTaskInfoScreen = {
-                taskData ->
-                    navController.navigate("taskInfoScreen/${taskData}")
+                    taskData ->
+                navController.navigate("taskInfoScreen/${taskData}")
 
             },
             listOfTask = listOfTask,
@@ -150,11 +168,9 @@ fun NavBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .padding(horizontal = 15.dp)
-            .fillMaxSize()
     ) {
         // Container for logo, horizontally placed
         Row(
-            modifier = modifier.fillMaxHeight(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Logo
@@ -204,7 +220,6 @@ fun TaskLists(
     listOfTask: List<TaskNode>,
     modifier: Modifier = Modifier
 ) {
-
     var delay by remember { mutableLongStateOf(200) }
 
     Column (
@@ -258,7 +273,6 @@ fun TaskLists(
                 }
 
             }
-
         }
     }
 }
@@ -283,26 +297,22 @@ fun TaskTab(
     }
 
     var clickOnce by remember {mutableStateOf(true)}
-    Button (
+
+    Surface (
         onClick = {
-            if (!clickOnce) {return@Button}
+            if (!clickOnce) {return@Surface}
             clickOnce = false
             val taskData = Uri.encode(Json.encodeToString(taskNode))
             toTaskInfoScreen(taskData) // Function to go to TaskInfoScreen
         },
-        colors = buttonColors(
-            containerColor = Color.Transparent,
-            contentColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            disabledContentColor = Color.Transparent
-        ),
         enabled = clickOnce,
-        contentPadding = PaddingValues(5.dp),
-        modifier = modifier
+        modifier = Modifier
             .offset {
                 IntOffset(offsetX.roundToPx(), 0)
             }
-            .fillMaxWidth()
+            .padding(5.dp)
+            .fillMaxWidth(),
+        color = Color.Transparent
     ) {
         Row(
             modifier = Modifier
@@ -347,12 +357,8 @@ fun TaskTab(
                 )
             }
         }
+        Spacer(Modifier.height(5.dp))
     }
-    Spacer(Modifier.height(5.dp))
-    HorizontalDivider(
-        thickness = 1.dp,
-        color = Color.White
-    )
 }
 
 @Preview(
