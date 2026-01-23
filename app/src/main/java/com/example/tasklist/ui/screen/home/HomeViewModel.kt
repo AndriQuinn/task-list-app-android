@@ -40,10 +40,11 @@ class HomeViewModel : ViewModel() {
                         .split("/") // Get the deadline
                     val date = currentDate.split("/") // Get the current date
 
-                    if (date[1].toInt() > deadline[0].toInt()) { // Check if the current date is 1 month late than the deadline
-                        updatedList.getJSONObject(task).put("status", "MISSED") // Update the status
-                    } else if (date[1].toInt() == deadline[0].toInt() && date[2].toInt() > deadline[1].toInt()) { // Check if the current date if the day is past deadline
-                        updatedList.getJSONObject(task).put("status", "MISSED") // Update status
+                    // Check if the past deadline by comparing the day or month
+                    if (date[1].toInt() > deadline[1].toInt() || date[0].toInt() > deadline[0].toInt()) {
+                        val updatedTaskObject = updatedList.getJSONObject(task) // Create json object to hold the task data e.g. title
+                        updatedTaskObject.put("status", "MISSED")
+                        updatedList.put(task, updatedTaskObject)
                     }
                 }
             }
